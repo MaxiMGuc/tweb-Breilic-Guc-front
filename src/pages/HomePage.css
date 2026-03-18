@@ -1,0 +1,206 @@
+/*
+ * Стили первоначальной версии главной страницы:
+ * topbar, hero, форма поиска и карточки популярных билетов.
+ */
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f6cff;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.topbar-actions button {
+  border: 1px solid #d8e1f0;
+  background: #fff;
+  color: #1e2a3a;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.user-pill {
+  border: 1px solid #cfe0ff;
+  background: #eaf2ff;
+  color: #0f6cff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hero {
+  background: linear-gradient(120deg, #0f6cff, #33b0ff);
+  color: #fff;
+  border-radius: 20px;
+  padding: 40px 24px;
+  text-align: left;
+}
+
+.hero h1 {
+  margin: 0 0 12px;
+  font-size: 38px;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 620px;
+  font-size: 18px;
+  opacity: 0.95;
+}
+
+.search-card {
+  border: 1px solid #e2e8f5;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+}
+
+.search-form {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  text-align: left;
+}
+
+.search-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #50627b;
+}
+
+.search-form input {
+  border: 1px solid #d6deeb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.search-button {
+  border: none;
+  border-radius: 10px;
+  background: #ff6d00;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.results {
+  border: 1px solid #e2e8f5;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.results-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.results-header a {
+  color: #0f6cff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ticket-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-card {
+  border: 1px solid #e6edf8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.airline {
+  margin: 0 0 2px;
+  font-weight: 700;
+  color: #1e2a3a;
+}
+
+.route {
+  margin: 0;
+  color: #1e2a3a;
+}
+
+.date {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: #6d7f99;
+}
+
+.price {
+  margin: 0;
+  color: #0f6cff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .app {
+    padding: 16px;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 32px 18px;
+  }
+
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .search-button {
+    min-height: 44px;
+  }
+
+  .ticket-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+

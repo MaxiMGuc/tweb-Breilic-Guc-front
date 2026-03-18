@@ -1,190 +1,191 @@
-.app {
-  display: flex;
-  flex-direction: column;
+/*
+ * Стили auth-раздела: layout, карточки, табы и адаптивность экранов входа/регистрации.
+ */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 460px);
   gap: 24px;
+  align-items: stretch;
   padding: 24px;
 }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.auth-info {
+  border-radius: 24px;
+  padding: 40px 34px;
+  background: linear-gradient(145deg, #0f6cff, #34b2ff);
+  color: #fff;
+  box-shadow: 0 14px 34px rgba(15, 108, 255, 0.25);
 }
 
 .brand {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #0f6cff;
-}
-
-.topbar-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.topbar-actions button {
-  border: 1px solid #d8e1f0;
-  background: #fff;
-  color: #1e2a3a;
-  border-radius: 10px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-.hero {
-  background: linear-gradient(120deg, #0f6cff, #33b0ff);
-  color: #fff;
-  border-radius: 20px;
-  padding: 40px 24px;
-  text-align: left;
-}
-
-.hero h1 {
   margin: 0 0 12px;
-  font-size: 38px;
-  line-height: 1.15;
-  color: #fff;
-}
-
-.hero p {
-  margin: 0;
-  max-width: 620px;
-  font-size: 18px;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
   opacity: 0.95;
 }
 
-.search-card {
-  border: 1px solid #e2e8f5;
-  border-radius: 16px;
-  padding: 20px;
-  background: #fff;
+.auth-info h1 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.1;
 }
 
-.search-form {
+.subtitle {
+  margin: 14px 0 18px;
+  font-size: 17px;
+  line-height: 1.45;
+  opacity: 0.95;
+  max-width: 48ch;
+}
+
+.auth-info ul {
+  margin: 0;
+  padding-left: 18px;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-  text-align: left;
-}
-
-.search-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: #50627b;
-}
-
-.search-form input {
-  border: 1px solid #d6deeb;
-  border-radius: 10px;
-  padding: 10px 12px;
+  gap: 10px;
+  line-height: 1.4;
   font-size: 15px;
 }
 
-.search-button {
-  border: none;
-  border-radius: 10px;
-  background: #ff6d00;
-  color: #fff;
+.auth-card {
+  border: 1px solid #d8e2f1;
+  border-radius: 24px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(30, 42, 58, 0.08);
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  border: 1px solid #d8e2f1;
+  border-radius: 12px;
+  min-height: 42px;
+  background: #fff;
+  color: #324968;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.results {
-  border: 1px solid #e2e8f5;
-  border-radius: 16px;
-  padding: 20px;
-  background: #fff;
+.tab.active {
+  background: #0f6cff;
+  border-color: #0f6cff;
+  color: #fff;
 }
 
-.results-header {
+.auth-form {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.results-header h2 {
-  margin: 0;
+.auth-form h2 {
+  margin: 2px 0 4px;
   font-size: 24px;
+  color: #1e2a3a;
 }
 
-.results-header a {
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #4d627d;
+}
+
+.auth-form input[type='text'],
+.auth-form input[type='email'],
+.auth-form input[type='password'] {
+  border: 1px solid #cfd9ea;
+  border-radius: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: #1e2a3a;
+  box-sizing: border-box;
+}
+
+.auth-form input[type='text']:focus,
+.auth-form input[type='email']:focus,
+.auth-form input[type='password']:focus {
+  outline: 2px solid #b3d1ff;
+  border-color: #0f6cff;
+}
+
+.checkbox-row {
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px !important;
+  margin-top: 4px;
+}
+
+.checkbox-row input {
+  margin-top: 2px;
+}
+
+.primary-button {
+  border: none;
+  border-radius: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: #ff6d00;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #ea6400;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: #0f6cff;
+  font-size: 14px;
+  padding: 0;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.helper-text {
+  margin: 0;
+  font-size: 14px;
+  color: #5f738e;
+}
+
+.helper-text a {
   color: #0f6cff;
   text-decoration: none;
   font-weight: 600;
 }
 
-.ticket-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
+.field-error {
+  color: #d1293d;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
-.ticket-card {
-  border: 1px solid #e6edf8;
-  border-radius: 12px;
-  padding: 14px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: left;
-}
-
-.airline {
-  margin: 0 0 2px;
-  font-weight: 700;
-  color: #1e2a3a;
-}
-
-.route {
-  margin: 0;
-  color: #1e2a3a;
-}
-
-.date {
-  margin: 2px 0 0;
-  font-size: 14px;
-  color: #6d7f99;
-}
-
-.price {
-  margin: 0;
-  color: #0f6cff;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .app {
+@media (max-width: 920px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
     padding: 16px;
   }
 
-  .hero {
-    text-align: center;
-    padding: 32px 18px;
+  .auth-info {
+    padding: 30px 22px;
   }
 
-  .hero h1 {
-    font-size: 30px;
-  }
-
-  .search-form {
-    grid-template-columns: 1fr;
-  }
-
-  .search-button {
-    min-height: 44px;
-  }
-
-  .ticket-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  .auth-info h1 {
+    font-size: 34px;
   }
 }

@@ -1,86 +1,58 @@
+/**
+ * Корневой компонент auth-раздела: собирает общий layout и подключает нужную страницу
+ * (главная/вход/регистрация) в зависимости от текущего URL.
+ */
 import './App.css'
+import { AuthInfoPanel } from './components/auth/AuthInfoPanel'
+import { AuthTabs } from './components/auth/AuthTabs'
+import { useAuthPage } from './hooks/useAuthPage'
+import { useMockAuth } from './hooks/useMockAuth'
+import { HomePage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
 
-const popularTickets = [
-  {
-    id: 1,
-    airline: 'S7 Airlines',
-    price: '9 450 RUR',
-    route: 'Moscow -> Sochi',
-    date: '20 Mar, direct flight',
-  },
-  {
-    id: 2,
-    airline: 'Aeroflot',
-    price: '12 180 RUR',
-    route: 'Saint Petersburg -> Kaliningrad',
-    date: '22 Mar, 1 stop',
-  },
-  {
-    id: 3,
-    airline: 'Utair',
-    price: '8 790 RUR',
-    route: 'Kazan -> Mineralnye Vody',
-    date: '25 Mar, direct flight',
-  },
-]
-
+/**
+ * Отвечает только за композицию экрана, без бизнес-логики авторизации.
+ */
 function App() {
+  const { currentPage, navigateTo } = useAuthPage()
+  const { isAuthenticated, userName, login, logout } = useMockAuth()
+
+  const handleLogin = (name: string) => {
+    login(name)
+    navigateTo('home')
+  }
+
+  const handleRegister = (name: string) => {
+    login(name)
+    navigateTo('home')
+  }
+
+  if (currentPage === 'home') {
+    return (
+      <HomePage
+        isAuthenticated={isAuthenticated}
+        userName={userName}
+        onLogout={() => {
+          logout()
+          navigateTo('login')
+        }}
+        onOpenLogin={() => navigateTo('login')}
+      />
+    )
+  }
+
   return (
-    <main className="app">
-      <header className="topbar">
-        <p className="brand">Aviasales</p>
-        <nav className="topbar-actions">
-          <button type="button">Help</button>
-          <button type="button">Sign in</button>
-        </nav>
-      </header>
+    <main className="auth-layout">
+      <AuthInfoPanel />
 
-      <section className="hero">
-        <h1>Find cheap flights in seconds</h1>
-        <p>Compare hundreds of airlines and travel sites with one search.</p>
-      </section>
-
-      <section className="search-card" aria-label="Flight search">
-        <form className="search-form">
-          <label>
-            From
-            <input type="text" placeholder="Moscow" />
-          </label>
-          <label>
-            To
-            <input type="text" placeholder="Sochi" />
-          </label>
-          <label>
-            Departure
-            <input type="date" />
-          </label>
-          <label>
-            Return
-            <input type="date" />
-          </label>
-          <button type="submit" className="search-button">
-            Search tickets
-          </button>
-        </form>
-      </section>
-
-      <section className="results" aria-label="Popular offers">
-        <div className="results-header">
-          <h2>Popular offers</h2>
-          <a href="/">See all</a>
-        </div>
-        <ul className="ticket-list">
-          {popularTickets.map((ticket) => (
-            <li key={ticket.id} className="ticket-card">
-              <div>
-                <p className="airline">{ticket.airline}</p>
-                <p className="route">{ticket.route}</p>
-                <p className="date">{ticket.date}</p>
-              </div>
-              <p className="price">{ticket.price}</p>
-            </li>
-          ))}
-        </ul>
+      <section className="auth-card" aria-label="Авторизация">
+        <AuthTabs currentPage={currentPage} onNavigate={navigateTo} />
+        {currentPage === 'login' ? (
+          <LoginPage onNavigate={navigateTo} onLogin={handleLogin} />
+        ) : (
+          <RegisterPage onNavigate={navigateTo} onRegister={handleRegister} />
+        )}
       </section>
     </main>
   )
