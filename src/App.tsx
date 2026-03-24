@@ -1,87 +1,45 @@
+// Основной layout приложения: отображает шапку с навигацией по вкладкам и контейнер текущей страницы.
 import './App.css'
+import { NavLink, Outlet } from 'react-router-dom'
 
-const popularTickets = [
-  {
-    id: 1,
-    airline: 'S7 Airlines',
-    price: '9 450 RUR',
-    route: 'Moscow -> Sochi',
-    date: '20 Mar, direct flight',
-  },
-  {
-    id: 2,
-    airline: 'Aeroflot',
-    price: '12 180 RUR',
-    route: 'Saint Petersburg -> Kaliningrad',
-    date: '22 Mar, 1 stop',
-  },
-  {
-    id: 3,
-    airline: 'Utair',
-    price: '8 790 RUR',
-    route: 'Kazan -> Mineralnye Vody',
-    date: '25 Mar, direct flight',
-  },
-]
-
+// Компонент-оболочка для всех страниц, подключенных через роутер.
 function App() {
   return (
     <main className="app">
       <header className="topbar">
-        <p className="brand">Aviasales</p>
-        <nav className="topbar-actions">
-          <button type="button">Help</button>
-          <button type="button">Sign in</button>
+        <NavLink to="/" className="brand" aria-label="Go to home page">
+          Aviasales
+        </NavLink>
+        <nav className="topbar-menu" aria-label="Main services">
+          <NavLink to="/" end className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}>
+            Flights
+          </NavLink>
+          <NavLink to="/hotels" className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}>
+            Hotels
+          </NavLink>
+          <NavLink to="/shorts" className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}>
+            Shorts
+          </NavLink>
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
+          >
+            Favorites
+          </NavLink>
+        </nav>
+        <nav className="topbar-actions" aria-label="Page navigation">
+          <NavLink to="/" end className={({ isActive }) => `tab-link ${isActive ? 'active' : ''}`}>
+            Home
+          </NavLink>
+          <NavLink to="/help" className={({ isActive }) => `tab-link ${isActive ? 'active' : ''}`}>
+            Help
+          </NavLink>
+          <button type="button" className="signin-button">
+            Sign in
+          </button>
         </nav>
       </header>
-
-      <section className="hero">
-        <h1>Find cheap flights in seconds</h1>
-        <p>Compare hundreds of airlines and travel sites with one search.</p>
-      </section>
-
-      <section className="search-card" aria-label="Flight search">
-        <form className="search-form">
-          <label>
-            From
-            <input type="text" placeholder="Moscow" />
-          </label>
-          <label>
-            To
-            <input type="text" placeholder="Sochi" />
-          </label>
-          <label>
-            Departure
-            <input type="date" />
-          </label>
-          <label>
-            Return
-            <input type="date" />
-          </label>
-          <button type="submit" className="search-button">
-            Search tickets
-          </button>
-        </form>
-      </section>
-
-      <section className="results" aria-label="Popular offers">
-        <div className="results-header">
-          <h2>Popular offers</h2>
-          <a href="/">See all</a>
-        </div>
-        <ul className="ticket-list">
-          {popularTickets.map((ticket) => (
-            <li key={ticket.id} className="ticket-card">
-              <div>
-                <p className="airline">{ticket.airline}</p>
-                <p className="route">{ticket.route}</p>
-                <p className="date">{ticket.date}</p>
-              </div>
-              <p className="price">{ticket.price}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <Outlet />
     </main>
   )
 }
