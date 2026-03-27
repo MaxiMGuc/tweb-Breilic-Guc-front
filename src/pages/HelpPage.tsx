@@ -1,8 +1,7 @@
-// Отдельная страница помощи клиентам с краткой инструкцией по покупке билетов.
-// Нужна для снижения путаницы: пользователь открывает ее как отдельную вкладку.
+// Центр помощи: краткая инструкция по покупке билетов (вложена в HelpLayout).
 function HelpPage() {
   return (
-    <section className="help-page" aria-label="Help for customers">
+    <section className="help-inner help-page" aria-label="Help for customers">
       <h2>Help center: how to buy tickets</h2>
       <p className="help-intro">
         Follow this short guide to quickly find and purchase the best flight for your trip.

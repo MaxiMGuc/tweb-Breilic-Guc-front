@@ -10,12 +10,12 @@ function SearchCard() {
         <NavLink to="/" end className={({ isActive }) => `trip-mode-tab ${isActive ? 'active' : ''}`}>
           Round trip
         </NavLink>
-        <NavLink to="/one-way" className={({ isActive }) => `trip-mode-tab ${isActive ? 'active' : ''}`}>
+        <button type="button" className="trip-mode-tab">
           One way
-        </NavLink>
-        <NavLink to="/multi-city" className={({ isActive }) => `trip-mode-tab ${isActive ? 'active' : ''}`}>
+        </button>
+        <button type="button" className="trip-mode-tab">
           Multi-city
-        </NavLink>
+        </button>
       </div>
 
       <div className="search-row">
@@ -38,9 +38,9 @@ function SearchCard() {
           <span>Passengers</span>
           <input type="text" placeholder="1 passenger, economy" />
         </label>
-        <button type="button" className="search-button">
+        <NavLink to="/search/results" className="search-button search-button-link">
           Search tickets
-        </button>
+        </NavLink>
       </div>
 
       <div className="search-options">
