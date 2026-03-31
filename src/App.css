@@ -303,30 +303,98 @@
   background: #fff;
 }
 
-.results-header {
+.auth-form {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.results-header h2 {
-  margin: 0;
+.auth-form h2 {
+  margin: 2px 0 4px;
   font-size: 24px;
+  color: #1e2a3a;
 }
 
-.results-header a {
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #4d627d;
+}
+
+.auth-form input[type='text'],
+.auth-form input[type='email'],
+.auth-form input[type='password'] {
+  border: 1px solid #cfd9ea;
+  border-radius: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: #1e2a3a;
+  box-sizing: border-box;
+}
+
+.auth-form input[type='text']:focus,
+.auth-form input[type='email']:focus,
+.auth-form input[type='password']:focus {
+  outline: 2px solid #b3d1ff;
+  border-color: #0f6cff;
+}
+
+.checkbox-row {
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px !important;
+  margin-top: 4px;
+}
+
+.checkbox-row input {
+  margin-top: 2px;
+}
+
+.primary-button {
+  border: none;
+  border-radius: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  background: #ff6d00;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #ea6400;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: #0f6cff;
+  font-size: 14px;
+  padding: 0;
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.helper-text {
+  margin: 0;
+  font-size: 14px;
+  color: #5f738e;
+}
+
+.helper-text a {
   color: #0f6cff;
   text-decoration: none;
   font-weight: 600;
 }
 
-.ticket-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
+.field-error {
+  color: #d1293d;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
 .ticket-card {
