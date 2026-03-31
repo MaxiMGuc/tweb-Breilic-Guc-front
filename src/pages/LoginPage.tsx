@@ -1,7 +1,16 @@
 // Вход в аккаунт.
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.tsx'
 
 function LoginPage() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const handleMockLogin = () => {
+    login()
+    navigate('/profile', { replace: true })
+  }
+
   return (
     <section className="page-shell page-auth" aria-label="Log in">
       <header className="page-header">
@@ -24,7 +33,7 @@ function LoginPage() {
           <input type="checkbox" />
           Remember me on this device
         </label>
-        <button type="button" className="primary-button wide">
+        <button type="button" className="primary-button wide" onClick={handleMockLogin}>
           Log in
         </button>
         <button type="button" className="text-button">
