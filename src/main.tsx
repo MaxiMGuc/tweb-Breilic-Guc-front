@@ -7,6 +7,9 @@ import { AuthProvider } from './context/AuthContext.tsx'
 import { BookingProvider } from './context/BookingContext.tsx'
 import App from './App.tsx'
 import HelpLayout from './components/HelpLayout.tsx'
+import { RequireAuth } from './components/RequireAuth.tsx'
+import AccountPage from './pages/AccountPage.tsx'
+import AuthLayout from './pages/AuthLayout.tsx'
 import AdminBookingsPage from './pages/AdminBookingsPage.tsx'
 import AdminFlightsPage from './pages/AdminFlightsPage.tsx'
 import AdminUsersPage from './pages/AdminUsersPage.tsx'
@@ -47,11 +50,36 @@ createRoot(document.getElementById('root')!).render(
           <Route path="booking/success" element={<BookingSuccessPage />} />
           <Route path="my-trips" element={<MyTripsPage />} />
           <Route path="my-trips/:id" element={<TripDetailPage />} />
-          <Route path="auth/login" element={<LoginPage />} />
-          <Route path="auth/register" element={<RegisterPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="profile/settings" element={<ProfileSettingsPage />} />
-          <Route path="profile/history" element={<ProfileHistoryPage />} />
+          <Route path="account" element={<AccountPage />} />
+          <Route path="auth" element={<AuthLayout />}>
+            <Route index element={<Navigate to="login" replace />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+          </Route>
+          <Route
+            path="profile"
+            element={
+              <RequireAuth>
+                <ProfilePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="profile/settings"
+            element={
+              <RequireAuth>
+                <ProfileSettingsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="profile/history"
+            element={
+              <RequireAuth>
+                <ProfileHistoryPage />
+              </RequireAuth>
+            }
+          />
           <Route path="favorites" element={<FavoritesPage />} />
           <Route path="help" element={<HelpLayout />}>
             <Route index element={<HelpPage />} />

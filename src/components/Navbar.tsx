@@ -161,6 +161,9 @@ function Navbar() {
           'account',
           'Account',
           <>
+            <NavLink to="/account" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
+              Account
+            </NavLink>
             <NavLink to="/profile" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               Profile
             </NavLink>
