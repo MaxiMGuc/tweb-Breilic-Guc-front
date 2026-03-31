@@ -1,53 +1,43 @@
-// Страница поиска билетов: режим рейса, swap, валюта и сортировка (T11, T12, T14).
-import { useCallback, useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { LS_SEARCH_PREFS } from '../constants/storageKeys.ts'
-
-export type TripMode = 'round' | 'oneway' | 'multi'
-
-type SearchPrefs = {
-  currency: string
-  sortBy: string
-}
-
-function loadPrefs(): SearchPrefs {
-  try {
-    const raw = localStorage.getItem(LS_SEARCH_PREFS)
-    if (!raw) return { currency: 'USD', sortBy: 'price' }
-    const p = JSON.parse(raw) as Partial<SearchPrefs>
-    return {
-      currency: typeof p.currency === 'string' ? p.currency : 'USD',
-      sortBy: typeof p.sortBy === 'string' ? p.sortBy : 'price',
-    }
-  } catch {
-    return { currency: 'USD', sortBy: 'price' }
-  }
-}
+// Страница поиска билетов: общий хук с главной формой (исполнитель B — согласование с SearchCard).
+import { useEffect } from 'react'
+import { NavLink, useSearchParams } from 'react-router-dom'
+import { useTripSearchForm } from '../hooks/useTripSearchForm.ts'
 
 function SearchPage() {
-  const [tripMode, setTripMode] = useState<TripMode>('round')
-  const [from, setFrom] = useState('Moscow')
-  const [to, setTo] = useState('Istanbul')
-  const [dates, setDates] = useState('28 Mar — 2 Apr')
-  const [flexible, setFlexible] = useState(false)
-  const [nearbyAirports, setNearbyAirports] = useState(false)
-  const [directOnly, setDirectOnly] = useState(false)
-
-  const [currency, setCurrency] = useState(() => loadPrefs().currency)
-  const [sortBy, setSortBy] = useState(() => loadPrefs().sortBy)
+  const [searchParams] = useSearchParams()
+  const {
+    tripMode,
+    setTripMode,
+    from,
+    setFrom,
+    to,
+    setTo,
+    dates,
+    setDates,
+    flexible,
+    setFlexible,
+    nearbyAirports,
+    setNearbyAirports,
+    directOnly,
+    setDirectOnly,
+    currency,
+    setCurrency,
+    sortBy,
+    setSortBy,
+    swapEndpoints,
+    buildResultsPath,
+  } = useTripSearchForm()
 
   useEffect(() => {
-    try {
-      localStorage.setItem(LS_SEARCH_PREFS, JSON.stringify({ currency, sortBy }))
-    } catch {
-      /* ignore */
-    }
-  }, [currency, sortBy])
+    const pf = searchParams.get('from')
+    const pt = searchParams.get('to')
+    if (pf) setFrom(pf)
+    if (pt) setTo(pt)
+    const mode = searchParams.get('mode') as 'round' | 'oneway' | 'multi' | null
+    if (mode === 'round' || mode === 'oneway' || mode === 'multi') setTripMode(mode)
+  }, [searchParams, setFrom, setTo, setTripMode])
 
-  const swapEndpoints = useCallback(() => {
-    setFrom(to)
-    setTo(from)
-  }, [from, to])
+  const searchPath = buildResultsPath({ includePageOptions: true, includeHotel: false })
 
   return (
     <section className="page-shell" aria-label="Flight search">
@@ -85,7 +75,12 @@ function SearchPage() {
               onChange={(e) => setFrom(e.target.value)}
             />
           </label>
-          <button type="button" className="swap-button" aria-label="Swap departure and destination" onClick={swapEndpoints}>
+          <button
+            type="button"
+            className="swap-button"
+            aria-label="Swap departure and destination"
+            onClick={swapEndpoints}
+          >
             ↔
           </button>
           <label className="search-field">
@@ -116,10 +111,7 @@ function SearchPage() {
             <span>Passengers &amp; class</span>
             <input type="text" placeholder="1 adult, economy" readOnly />
           </label>
-          <NavLink
-            to={`/search/results?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&mode=${tripMode}&cur=${currency}&sort=${sortBy}`}
-            className="search-button search-button-link"
-          >
+          <NavLink to={searchPath} className="search-button search-button-link">
             Search
           </NavLink>
         </div>

@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { LS_SAVED_SEARCH } from '../constants/storageKeys.ts'
 import { useBooking } from '../context/BookingContext.tsx'
 import { MOCK_TICKETS, type MockTicket } from '../data/mockSearchResults.ts'
+import { appendSearchHistory } from '../utils/searchHistory.ts'
 
 const INITIAL_MAX_PRICE = 800
 const INITIAL_STOPS = { any: true, nonstop: false, one: false }
@@ -24,6 +25,13 @@ function SearchResultsPage() {
   useEffect(() => {
     setSearchResultsReturnPath(`${location.pathname}${location.search}`)
   }, [location.pathname, location.search, setSearchResultsReturnPath])
+
+  const fromQ = searchParams.get('from') ?? 'Moscow'
+  const toQ = searchParams.get('to') ?? 'Istanbul'
+
+  useEffect(() => {
+    appendSearchHistory(fromQ, toQ)
+  }, [fromQ, toQ])
 
   const resetFilters = useCallback(() => {
     setMaxPrice(INITIAL_MAX_PRICE)
@@ -98,9 +106,6 @@ function SearchResultsPage() {
 
     return sorted
   }, [airlineFilter, departureHint, maxPrice, stops, toolbarSort])
-
-  const fromQ = searchParams.get('from') ?? 'Moscow'
-  const toQ = searchParams.get('to') ?? 'Istanbul'
 
   const selectTicket = (t: MockTicket) => {
     const currency = searchParams.get('cur') ?? 'USD'
