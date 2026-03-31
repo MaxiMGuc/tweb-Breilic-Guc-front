@@ -1,103 +1,38 @@
-/**
- * UI-страница входа пользователя.
- * Содержит клиентскую валидацию email/пароля и навигацию на регистрацию.
- */
-import { useState } from 'react'
-import type { AuthPage } from '../types/auth'
+// Вход в аккаунт.
+import { Link } from 'react-router-dom'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-type LoginPageProps = {
-  onNavigate: (page: AuthPage) => void
-  onLogin: (name: string) => void
-}
-
-export const LoginPage = ({ onNavigate, onLogin }: LoginPageProps) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [emailError, setEmailError] = useState('')
-  const [passwordError, setPasswordError] = useState('')
-
-  const handleLogin = () => {
-    const normalizedEmail = email.trim()
-    let hasErrors = false
-
-    if (!EMAIL_PATTERN.test(normalizedEmail)) {
-      setEmailError('Введите корректный e-mail.')
-      hasErrors = true
-    } else {
-      setEmailError('')
-    }
-
-    if (password.trim().length === 0) {
-      setPasswordError('Введите пароль.')
-      hasErrors = true
-    } else {
-      setPasswordError('')
-    }
-
-    if (hasErrors) {
-      return
-    }
-
-    // Для mock-режима используем e-mail как идентификатор пользователя.
-    onLogin(normalizedEmail)
-  }
-
+function LoginPage() {
   return (
-    <form className="auth-form">
-      <h2>Вход в систему</h2>
-      <label>
-        E-mail
-        <input
-          type="email"
-          placeholder="name@example.com"
-          autoComplete="email"
-          value={email}
-          onChange={(event) => {
-            setEmail(event.target.value)
-            if (emailError) {
-              setEmailError('')
-            }
-          }}
-        />
-        {emailError ? <span className="field-error">{emailError}</span> : null}
-      </label>
-      <label>
-        Пароль
-        <input
-          type="password"
-          placeholder="Введите пароль"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value)
-            if (passwordError) {
-              setPasswordError('')
-            }
-          }}
-        />
-        {passwordError ? <span className="field-error">{passwordError}</span> : null}
-      </label>
-      <button type="button" className="primary-button" onClick={handleLogin}>
-        Войти
-      </button>
-      <button type="button" className="link-button">
-        Забыли пароль?
-      </button>
-      <p className="helper-text">
-        Нет аккаунта?{' '}
-        <a
-          href="/register"
-          onClick={(event) => {
-            event.preventDefault()
-            onNavigate('register')
-          }}
-        >
-          Зарегистрироваться
-        </a>
-      </p>
-    </form>
+    <section className="page-shell page-auth" aria-label="Log in">
+      <header className="page-header">
+        <h1 className="page-title">Log in</h1>
+        <p className="page-lead">
+          No account yet? <Link to="/auth/register">Create one</Link>
+        </p>
+      </header>
+
+      <form className="auth-form">
+        <label className="field-block">
+          <span>Email</span>
+          <input type="email" autoComplete="username" />
+        </label>
+        <label className="field-block">
+          <span>Password</span>
+          <input type="password" autoComplete="current-password" />
+        </label>
+        <label className="checkbox-row">
+          <input type="checkbox" />
+          Remember me on this device
+        </label>
+        <button type="button" className="primary-button wide">
+          Log in
+        </button>
+        <button type="button" className="text-button">
+          Forgot password?
+        </button>
+      </form>
+    </section>
   )
 }
 
+export default LoginPage

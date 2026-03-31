@@ -1,3 +1,37 @@
+Краткая структура проекта на фронте:
+/ (Главная)
+│
+├── /search (Поиск билетов)
+│   ├── /search/results (Результаты поиска)
+│   └── /search/results/:ticketId (Детали билета)
+│
+├── /booking (Бронирование)
+│   ├── /booking/passengers (Данные пассажиров)
+│   ├── /booking/payment (Оплата)
+│   └── /booking/success (Успешное бронирование)
+│
+├── /my-trips (Мои поездки)
+│   └── /my-trips/:id (Детали бронирования)
+│
+├── /auth
+│   ├── /login
+│   └── /register
+│
+├── /profile (Профиль пользователя)
+│   ├── /profile/settings
+│   └── /profile/history
+│
+├── /favorites (Избранные направления)
+│
+├── /help (Помощь)
+│   ├── /faq
+│   └── /support
+│
+└── /admin (опционально)
+    ├── /admin/flights
+    ├── /admin/users
+    └── /admin/bookings
+
 ПЛАН РЕАЛИЗАЦИИ ПРОЕКТА УРОВНЯ AVIASALES (React + TypeScript + C#)
 
 0. ВАЖНО ДО СТАРТА
