@@ -1071,6 +1071,54 @@ button.nav-dropdown-trigger {
   align-items: flex-start;
 }
 
+.auth-layout-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e6edf8;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-tabs .tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  color: #5c6b82;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.auth-tabs .tab.active {
+  color: #1565c0;
+  border-bottom-color: #1565c0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.modal-card {
+  max-width: 420px;
+  width: 100%;
+}
+
 .page-auth {
   max-width: 440px;
   margin: 0 auto;
