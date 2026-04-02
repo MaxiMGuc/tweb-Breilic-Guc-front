@@ -1,5 +1,33 @@
-// Админ: рейсы (заглушка UI).
+// Админ: рейсы — клиентский поиск по мок-таблице (T53).
+import { useMemo, useState } from 'react'
+
+type FlightRow = {
+  flight: string
+  route: string
+  departure: string
+  status: string
+}
+
+const MOCK_ROWS: FlightRow[] = [
+  { flight: 'XY101', route: 'SVO → IST', departure: '28 Mar 08:40', status: 'Scheduled' },
+  { flight: 'XY202', route: 'IST → SVO', departure: '2 Apr 18:10', status: 'Scheduled' },
+  { flight: 'XY303', route: 'DME → AYT', departure: '10 Apr 11:05', status: 'Scheduled' },
+]
+
 function AdminFlightsPage() {
+  const [query, setQuery] = useState('')
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return MOCK_ROWS
+    return MOCK_ROWS.filter(
+      (r) =>
+        r.flight.toLowerCase().includes(q) ||
+        r.route.toLowerCase().includes(q) ||
+        r.departure.toLowerCase().includes(q),
+    )
+  }, [query])
+
   return (
     <section className="page-shell page-admin" aria-label="Admin flights">
       <header className="page-header">
@@ -8,7 +36,14 @@ function AdminFlightsPage() {
       </header>
 
       <div className="admin-toolbar">
-        <input type="search" className="search-input-wide" placeholder="Search by flight number…" />
+        <input
+          type="search"
+          className="search-input-wide"
+          placeholder="Search by flight number…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Filter flights"
+        />
         <button type="button" className="primary-button">
           Add flight
         </button>
@@ -26,32 +61,28 @@ function AdminFlightsPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>XY101</td>
-              <td>SVO → IST</td>
-              <td>28 Mar 08:40</td>
-              <td>
-                <span className="badge">Scheduled</span>
-              </td>
-              <td>
-                <button type="button" className="text-button">
-                  Edit
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>XY202</td>
-              <td>IST → SVO</td>
-              <td>2 Apr 18:10</td>
-              <td>
-                <span className="badge">Scheduled</span>
-              </td>
-              <td>
-                <button type="button" className="text-button">
-                  Edit
-                </button>
-              </td>
-            </tr>
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="page-muted">
+                  No flights match “{query}”.
+                </td>
+              </tr>
+            ) : null}
+            {rows.map((row) => (
+              <tr key={row.flight}>
+                <td>{row.flight}</td>
+                <td>{row.route}</td>
+                <td>{row.departure}</td>
+                <td>
+                  <span className="badge">{row.status}</span>
+                </td>
+                <td>
+                  <button type="button" className="text-button">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

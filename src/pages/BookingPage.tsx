@@ -1,7 +1,14 @@
-// Обзор шага бронирования: сводка рейса и переход к данным пассажиров.
+// Обзор шага бронирования: сводка из контекста, возврат к результатам (T23).
 import { Link } from 'react-router-dom'
+import { useBooking } from '../context/BookingContext.tsx'
 
 function BookingPage() {
+  const { selectedOffer, baggageExtraUsd, searchResultsReturnPath } = useBooking()
+
+  const routeLabel = selectedOffer?.routeLabel ?? 'Moscow → Istanbul'
+  const priceBase = selectedOffer?.priceFrom ?? 189
+  const total = priceBase + baggageExtraUsd
+
   return (
     <section className="page-shell" aria-label="Booking overview">
       <ol className="booking-steps" aria-label="Booking progress">
@@ -22,7 +29,15 @@ function BookingPage() {
 
       <div className="detail-card">
         <h2>Selected flight</h2>
-        <p>Moscow → Istanbul · 28 Mar – 2 Apr · 1 adult · economy</p>
+        <p>
+          {routeLabel} · 28 Mar – 2 Apr · 1 adult · economy
+          {selectedOffer?.airline ? ` · ${selectedOffer.airline}` : ''}
+        </p>
+        <p className="page-muted">
+          Fare (mock): ${priceBase}
+          {baggageExtraUsd > 0 ? ` + extras $${baggageExtraUsd}` : ''} · Total due (preview): $
+          {total}
+        </p>
         <div className="form-row-inline">
           <label className="field-inline">
             <span>Contact email</span>
@@ -37,7 +52,7 @@ function BookingPage() {
           <Link to="/booking/passengers" className="primary-button">
             Continue
           </Link>
-          <Link to="/search/results" className="text-button">
+          <Link to={searchResultsReturnPath} className="text-button">
             Back to results
           </Link>
         </div>

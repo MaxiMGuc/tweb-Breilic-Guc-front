@@ -1,4 +1,5 @@
 // Главная страница приложения: собирает ключевые секции поиска и витрины предложений.
+import './HomePage.css'
 import HeroSection from '../components/HeroSection'
 import PopularOffers from '../components/PopularOffers'
 import SearchCard from '../components/SearchCard'

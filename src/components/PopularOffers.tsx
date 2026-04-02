@@ -1,5 +1,6 @@
 // Компонент списка популярных предложений.
 // Принимает массив билетов и отображает карточки в едином стиле.
+import { Link } from 'react-router-dom'
 import type { Ticket } from '../data/popularTickets'
 
 type PopularOffersProps = {
@@ -12,7 +13,7 @@ function PopularOffers({ tickets }: PopularOffersProps) {
     <section className="results" aria-label="Popular offers">
       <div className="results-header">
         <h2>Popular offers</h2>
-        <a href="/">See all</a>
+        <Link to="/search">See all</Link>
       </div>
       <ul className="ticket-list">
         {tickets.map((ticket) => (
