@@ -1,49 +1,56 @@
 // Настройки профиля: уведомления и безопасность.
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import PasswordField from '../components/form/PasswordField'
 
 function ProfileSettingsPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell" aria-label="Profile settings">
+    <section className="page-shell" aria-label={t('profileSettings.aria')}>
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/profile">Profile</Link>
+        <Link to="/profile">{t('profileSettings.breadcrumbProfile')}</Link>
         <span aria-hidden="true"> / </span>
-        <span>Settings</span>
+        <span>{t('profileSettings.breadcrumbSettings')}</span>
       </nav>
 
       <header className="page-header">
-        <h1 className="page-title">Settings</h1>
-        <p className="page-lead">Notifications, security, and connected accounts.</p>
+        <h1 className="page-title">{t('profileSettings.title')}</h1>
+        <p className="page-lead">{t('profileSettings.lead')}</p>
       </header>
 
       <div className="stack-form">
         <fieldset className="fieldset-card">
-          <legend>Notifications</legend>
+          <legend>{t('profileSettings.notifications')}</legend>
           <label className="checkbox-row">
             <input type="checkbox" defaultChecked />
-            Price alerts for saved routes
+            {t('profileSettings.priceAlerts')}
           </label>
           <label className="checkbox-row">
             <input type="checkbox" defaultChecked />
-            Trip reminders by email
+            {t('profileSettings.tripReminders')}
           </label>
           <label className="checkbox-row">
             <input type="checkbox" />
-            Promotions and newsletters
+            {t('profileSettings.promotions')}
           </label>
         </fieldset>
 
         <fieldset className="fieldset-card">
-          <legend>Security</legend>
-          <label className="field-block">
-            <span>Current password</span>
-            <input type="password" autoComplete="current-password" />
-          </label>
-          <label className="field-block">
-            <span>New password</span>
-            <input type="password" autoComplete="new-password" />
-          </label>
+          <legend>{t('profileSettings.security')}</legend>
+          <PasswordField
+            label={t('profileSettings.currentPassword')}
+            name="currentPassword"
+            autoComplete="current-password"
+          />
+          <PasswordField
+            label={t('profileSettings.newPassword')}
+            name="newPassword"
+            autoComplete="new-password"
+            showStrengthHint
+          />
           <button type="button" className="secondary-button">
-            Update password
+            {t('profileSettings.updatePassword')}
           </button>
         </fieldset>
       </div>

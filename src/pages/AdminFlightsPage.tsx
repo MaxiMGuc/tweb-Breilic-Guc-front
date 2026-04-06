@@ -1,16 +1,20 @@
 // Админ: рейсы (заглушка UI).
+import { useTranslation } from 'react-i18next'
+
 function AdminFlightsPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell page-admin" aria-label="Admin flights">
+    <section className="page-shell page-admin" aria-label={t('adminFlights.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Admin · Flights</h1>
-        <p className="page-lead">Manage flight records and schedules.</p>
+        <h1 className="page-title">{t('adminFlights.title')}</h1>
+        <p className="page-lead">{t('adminFlights.lead')}</p>
       </header>
 
       <div className="admin-toolbar">
-        <input type="search" className="search-input-wide" placeholder="Search by flight number…" />
+        <input type="search" className="search-input-wide" placeholder={t('adminFlights.searchPlaceholder')} />
         <button type="button" className="primary-button">
-          Add flight
+          {t('adminFlights.addFlight')}
         </button>
       </div>
 
@@ -18,10 +22,10 @@ function AdminFlightsPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Flight</th>
-              <th>Route</th>
-              <th>Departure</th>
-              <th>Status</th>
+              <th>{t('adminFlights.colFlight')}</th>
+              <th>{t('adminFlights.colRoute')}</th>
+              <th>{t('adminFlights.colDeparture')}</th>
+              <th>{t('adminFlights.colStatus')}</th>
               <th />
             </tr>
           </thead>
@@ -31,11 +35,11 @@ function AdminFlightsPage() {
               <td>SVO → IST</td>
               <td>28 Mar 08:40</td>
               <td>
-                <span className="badge">Scheduled</span>
+                <span className="badge">{t('adminFlights.scheduled')}</span>
               </td>
               <td>
                 <button type="button" className="text-button">
-                  Edit
+                  {t('adminFlights.edit')}
                 </button>
               </td>
             </tr>
@@ -44,11 +48,11 @@ function AdminFlightsPage() {
               <td>IST → SVO</td>
               <td>2 Apr 18:10</td>
               <td>
-                <span className="badge">Scheduled</span>
+                <span className="badge">{t('adminFlights.scheduled')}</span>
               </td>
               <td>
                 <button type="button" className="text-button">
-                  Edit
+                  {t('adminFlights.edit')}
                 </button>
               </td>
             </tr>

@@ -1,70 +1,73 @@
 // Страница поиска билетов: форма и опции (логика не подключена).
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
 function SearchPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell" aria-label="Flight search">
+    <section className="page-shell" aria-label={t('searchPage.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Search flights</h1>
-        <p className="page-lead">Enter your route and dates to compare offers from airlines and agencies.</p>
+        <h1 className="page-title">{t('searchPage.title')}</h1>
+        <p className="page-lead">{t('searchPage.lead')}</p>
       </header>
 
       <div className="search-card page-search-card">
-        <div className="trip-mode-tabs" role="tablist" aria-label="Trip mode">
+        <div className="trip-mode-tabs" role="tablist" aria-label={t('home.tripModeAria')}>
           <button type="button" className="trip-mode-tab active">
-            Round trip
+            {t('home.roundTrip')}
           </button>
           <button type="button" className="trip-mode-tab">
-            One way
+            {t('home.oneWay')}
           </button>
           <button type="button" className="trip-mode-tab">
-            Multi-city
+            {t('home.multiCity')}
           </button>
         </div>
 
         <div className="search-row">
           <label className="search-field">
-            <span>From</span>
-            <input type="text" placeholder="City or airport" autoComplete="off" />
+            <span>{t('home.from')}</span>
+            <input type="text" placeholder={t('searchPage.placeholderFrom')} autoComplete="off" />
           </label>
-          <button type="button" className="swap-button" aria-label="Swap departure and destination">
+          <button type="button" className="swap-button" aria-label={t('home.swapAria')}>
             ↔
           </button>
           <label className="search-field">
-            <span>To</span>
-            <input type="text" placeholder="City or airport" autoComplete="off" />
+            <span>{t('home.to')}</span>
+            <input type="text" placeholder={t('searchPage.placeholderFrom')} autoComplete="off" />
           </label>
           <label className="search-field">
-            <span>Dates</span>
-            <input type="text" placeholder="Departure — return" />
+            <span>{t('home.dates')}</span>
+            <input type="text" placeholder={t('searchPage.placeholderDates')} />
           </label>
           <label className="search-field">
-            <span>Passengers &amp; class</span>
-            <input type="text" placeholder="1 adult, economy" readOnly />
+            <span>{t('searchPage.passengersClass')}</span>
+            <input type="text" placeholder={t('searchPage.placeholderPassengers')} readOnly />
           </label>
           <NavLink to="/search/results" className="search-button search-button-link">
-            Search
+            {t('searchPage.search')}
           </NavLink>
         </div>
 
         <div className="search-options">
           <label>
             <input type="checkbox" />
-            Flexible dates (±3 days)
+            {t('searchPage.flexibleDates')}
           </label>
           <label>
             <input type="checkbox" />
-            Include nearby airports
+            {t('searchPage.nearbyAirports')}
           </label>
           <label>
             <input type="checkbox" />
-            Direct flights only
+            {t('searchPage.directOnly')}
           </label>
         </div>
 
         <div className="form-row-inline">
           <label className="field-inline">
-            <span>Currency</span>
+            <span>{t('searchPage.currency')}</span>
             <select defaultValue="USD">
               <option value="USD">USD</option>
               <option value="EUR">EUR</option>
@@ -72,10 +75,10 @@ function SearchPage() {
             </select>
           </label>
           <label className="field-inline">
-            <span>Sort by (preview)</span>
+            <span>{t('searchPage.sortPreview')}</span>
             <select defaultValue="price">
-              <option value="price">Cheapest first</option>
-              <option value="time">Shortest trip</option>
+              <option value="price">{t('searchPage.cheapestFirst')}</option>
+              <option value="time">{t('searchPage.shortestTrip')}</option>
             </select>
           </label>
         </div>

@@ -1,34 +1,34 @@
 // Вход в аккаунт.
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import EmailField from '../components/form/EmailField'
+import PasswordField from '../components/form/PasswordField'
 
 function LoginPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell page-auth" aria-label="Log in">
+    <section className="page-shell page-auth" aria-label={t('login.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Log in</h1>
+        <h1 className="page-title">{t('login.title')}</h1>
         <p className="page-lead">
-          No account yet? <Link to="/auth/register">Create one</Link>
+          {t('login.lead')}{' '}
+          <Link to="/auth/register">{t('login.createOne')}</Link>
         </p>
       </header>
 
-      <form className="auth-form">
-        <label className="field-block">
-          <span>Email</span>
-          <input type="email" autoComplete="username" />
-        </label>
-        <label className="field-block">
-          <span>Password</span>
-          <input type="password" autoComplete="current-password" />
-        </label>
+      <form className="auth-form" noValidate>
+        <EmailField label={t('common.email')} name="email" autoComplete="username" required />
+        <PasswordField label={t('common.password')} autoComplete="current-password" />
         <label className="checkbox-row">
           <input type="checkbox" />
-          Remember me on this device
+          {t('login.remember')}
         </label>
         <button type="button" className="primary-button wide">
-          Log in
+          {t('login.submit')}
         </button>
         <button type="button" className="text-button">
-          Forgot password?
+          {t('login.forgot')}
         </button>
       </form>
     </section>

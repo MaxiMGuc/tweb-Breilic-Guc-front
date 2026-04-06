@@ -1,26 +1,28 @@
 // Часто задаваемые вопросы.
+import { useTranslation } from 'react-i18next'
+
 function HelpFAQPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="help-inner" aria-label="FAQ">
+    <section className="help-inner" aria-label={t('helpFaq.aria')}>
       <header className="page-header">
-        <h1 className="page-title">FAQ</h1>
-        <p className="page-lead">Quick answers about booking, baggage, and changes.</p>
+        <h1 className="page-title">{t('helpFaq.title')}</h1>
+        <p className="page-lead">{t('helpFaq.lead')}</p>
       </header>
 
       <div className="faq-list">
         <details className="faq-item">
-          <summary>How do I change or cancel a ticket?</summary>
-          <p className="page-muted">
-            Fare rules depend on the airline. Use “Manage booking” in My trips when available.
-          </p>
+          <summary>{t('helpFaq.q1')}</summary>
+          <p className="page-muted">{t('helpFaq.a1')}</p>
         </details>
         <details className="faq-item">
-          <summary>When will I receive my e-ticket?</summary>
-          <p className="page-muted">After successful payment, confirmation is sent by email (placeholder).</p>
+          <summary>{t('helpFaq.q2')}</summary>
+          <p className="page-muted">{t('helpFaq.a2')}</p>
         </details>
         <details className="faq-item">
-          <summary>Can I choose seats?</summary>
-          <p className="page-muted">Seat maps and fees vary by carrier; options appear before payment.</p>
+          <summary>{t('helpFaq.q3')}</summary>
+          <p className="page-muted">{t('helpFaq.a3')}</p>
         </details>
       </div>
     </section>

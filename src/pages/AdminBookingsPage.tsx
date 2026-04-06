@@ -1,20 +1,24 @@
 // Админ: бронирования.
+import { useTranslation } from 'react-i18next'
+
 function AdminBookingsPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell page-admin" aria-label="Admin bookings">
+    <section className="page-shell page-admin" aria-label={t('adminBookings.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Admin · Bookings</h1>
-        <p className="page-lead">Inspect and assist with reservations.</p>
+        <h1 className="page-title">{t('adminBookings.title')}</h1>
+        <p className="page-lead">{t('adminBookings.lead')}</p>
       </header>
 
       <div className="admin-toolbar">
-        <input type="search" className="search-input-wide" placeholder="PNR or booking ref…" />
+        <input type="search" className="search-input-wide" placeholder={t('adminBookings.searchPlaceholder')} />
         <label className="field-inline">
-          <span>Date from</span>
+          <span>{t('adminBookings.dateFrom')}</span>
           <input type="date" />
         </label>
         <label className="field-inline">
-          <span>Date to</span>
+          <span>{t('adminBookings.dateTo')}</span>
           <input type="date" />
         </label>
       </div>
@@ -23,10 +27,10 @@ function AdminBookingsPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Ref</th>
-              <th>Route</th>
-              <th>Created</th>
-              <th>Status</th>
+              <th>{t('adminBookings.colRef')}</th>
+              <th>{t('adminBookings.colRoute')}</th>
+              <th>{t('adminBookings.colCreated')}</th>
+              <th>{t('adminBookings.colStatus')}</th>
               <th />
             </tr>
           </thead>
@@ -36,11 +40,11 @@ function AdminBookingsPage() {
               <td>Moscow → Istanbul</td>
               <td>2025-03-20</td>
               <td>
-                <span className="badge success">Paid</span>
+                <span className="badge success">{t('adminBookings.paid')}</span>
               </td>
               <td>
                 <button type="button" className="text-button">
-                  Open
+                  {t('adminBookings.open')}
                 </button>
               </td>
             </tr>

@@ -1,56 +1,59 @@
 // Форма поиска билетов на главной странице.
 // Пока статическая и нужна как базовый UI-скелет без бизнес-логики.
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 
 // Отображает вкладки режимов поиска и базовые поля формы для текущего (round trip) сценария.
 function SearchCard() {
+  const { t } = useTranslation()
+
   return (
-    <section className="search-card" aria-label="Flight search">
-      <div className="trip-mode-tabs" role="tablist" aria-label="Trip mode">
+    <section className="search-card" aria-label={t('home.searchAria')}>
+      <div className="trip-mode-tabs" role="tablist" aria-label={t('home.tripModeAria')}>
         <NavLink to="/" end className={({ isActive }) => `trip-mode-tab ${isActive ? 'active' : ''}`}>
-          Round trip
+          {t('home.roundTrip')}
         </NavLink>
         <button type="button" className="trip-mode-tab">
-          One way
+          {t('home.oneWay')}
         </button>
         <button type="button" className="trip-mode-tab">
-          Multi-city
+          {t('home.multiCity')}
         </button>
       </div>
 
       <div className="search-row">
         <label className="search-field">
-          <span>From</span>
+          <span>{t('home.from')}</span>
           <input type="text" placeholder="Moscow" />
         </label>
-        <button type="button" className="swap-button" aria-label="Swap departure and destination">
+        <button type="button" className="swap-button" aria-label={t('home.swapAria')}>
           ↔
         </button>
         <label className="search-field">
-          <span>To</span>
+          <span>{t('home.to')}</span>
           <input type="text" placeholder="Istanbul" />
         </label>
         <label className="search-field">
-          <span>Dates</span>
+          <span>{t('home.dates')}</span>
           <input type="text" placeholder="28 Mar - 2 Apr" />
         </label>
         <label className="search-field">
-          <span>Passengers</span>
+          <span>{t('home.passengers')}</span>
           <input type="text" placeholder="1 passenger, economy" />
         </label>
         <NavLink to="/search/results" className="search-button search-button-link">
-          Search tickets
+          {t('home.searchTickets')}
         </NavLink>
       </div>
 
       <div className="search-options">
         <label>
           <input type="checkbox" />
-          Open-hotel deals
+          {t('home.openHotelDeals')}
         </label>
         <label>
           <input type="checkbox" />
-          Include nearby airports
+          {t('home.nearbyAirports')}
         </label>
       </div>
     </section>

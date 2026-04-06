@@ -1,40 +1,44 @@
 // Верхняя панель навигации: ссылки по структуре проекта, выпадающие меню без бизнес-логики.
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
+import LanguageSwitcher from './LanguageSwitcher'
 
 function Navbar() {
+  const { t } = useTranslation()
+
   return (
     <header className="topbar">
-      <NavLink to="/" className="brand" aria-label="Go to home page">
-        Aviasales
+      <NavLink to="/" className="brand" aria-label={t('nav.brandAria')}>
+        {t('nav.brand')}
       </NavLink>
 
       <nav className="topbar-menu" aria-label="Main services">
         <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">Flights</summary>
+          <summary className="nav-dropdown-trigger">{t('nav.flights')}</summary>
           <div className="nav-dropdown-panel" role="menu">
             <NavLink to="/search" className="nav-dropdown-link" role="menuitem">
-              Search tickets
+              {t('nav.searchTickets')}
             </NavLink>
             <NavLink to="/search/results" className="nav-dropdown-link" role="menuitem">
-              Search results
+              {t('nav.searchResults')}
             </NavLink>
           </div>
         </details>
 
         <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">Booking</summary>
+          <summary className="nav-dropdown-trigger">{t('nav.booking')}</summary>
           <div className="nav-dropdown-panel" role="menu">
             <NavLink to="/booking" className="nav-dropdown-link" role="menuitem">
-              Overview
+              {t('nav.overview')}
             </NavLink>
             <NavLink to="/booking/passengers" className="nav-dropdown-link" role="menuitem">
-              Passengers
+              {t('nav.passengers')}
             </NavLink>
             <NavLink to="/booking/payment" className="nav-dropdown-link" role="menuitem">
-              Payment
+              {t('nav.payment')}
             </NavLink>
             <NavLink to="/booking/success" className="nav-dropdown-link" role="menuitem">
-              Success
+              {t('nav.success')}
             </NavLink>
           </div>
         </details>
@@ -43,73 +47,74 @@ function Navbar() {
           to="/my-trips"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
         >
-          My trips
+          {t('nav.myTrips')}
         </NavLink>
         <NavLink
           to="/favorites"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
         >
-          Favorites
+          {t('nav.favorites')}
         </NavLink>
 
         <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">Help</summary>
+          <summary className="nav-dropdown-trigger">{t('nav.help')}</summary>
           <div className="nav-dropdown-panel" role="menu">
             <NavLink to="/help" className="nav-dropdown-link" role="menuitem">
-              Help center
+              {t('nav.helpCenter')}
             </NavLink>
             <NavLink to="/help/faq" className="nav-dropdown-link" role="menuitem">
-              FAQ
+              {t('nav.faq')}
             </NavLink>
             <NavLink to="/help/support" className="nav-dropdown-link" role="menuitem">
-              Support
+              {t('nav.support')}
             </NavLink>
           </div>
         </details>
 
         <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">Account</summary>
+          <summary className="nav-dropdown-trigger">{t('nav.account')}</summary>
           <div className="nav-dropdown-panel" role="menu">
             <NavLink to="/profile" className="nav-dropdown-link" role="menuitem">
-              Profile
+              {t('nav.profile')}
             </NavLink>
             <NavLink to="/profile/settings" className="nav-dropdown-link" role="menuitem">
-              Settings
+              {t('nav.settings')}
             </NavLink>
             <NavLink to="/profile/history" className="nav-dropdown-link" role="menuitem">
-              History
+              {t('nav.history')}
             </NavLink>
             <NavLink to="/auth/login" className="nav-dropdown-link" role="menuitem">
-              Log in
+              {t('nav.logIn')}
             </NavLink>
             <NavLink to="/auth/register" className="nav-dropdown-link" role="menuitem">
-              Register
+              {t('nav.register')}
             </NavLink>
           </div>
         </details>
 
         <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">Admin</summary>
+          <summary className="nav-dropdown-trigger">{t('nav.admin')}</summary>
           <div className="nav-dropdown-panel" role="menu">
             <NavLink to="/admin/flights" className="nav-dropdown-link" role="menuitem">
-              Flights
+              {t('nav.adminFlights')}
             </NavLink>
             <NavLink to="/admin/users" className="nav-dropdown-link" role="menuitem">
-              Users
+              {t('nav.adminUsers')}
             </NavLink>
             <NavLink to="/admin/bookings" className="nav-dropdown-link" role="menuitem">
-              Bookings
+              {t('nav.adminBookings')}
             </NavLink>
           </div>
         </details>
       </nav>
 
       <div className="topbar-actions">
+        <LanguageSwitcher />
         <NavLink to="/auth/login" className="ghost-button">
-          Log in
+          {t('nav.logIn')}
         </NavLink>
         <NavLink to="/auth/register" className="primary-outline-button">
-          Sign up
+          {t('nav.signUp')}
         </NavLink>
       </div>
     </header>

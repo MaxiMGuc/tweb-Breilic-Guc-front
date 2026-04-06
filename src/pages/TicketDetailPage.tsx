@@ -1,52 +1,56 @@
 // Детали выбранного билета перед бронированием.
+import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
 
 function TicketDetailPage() {
+  const { t } = useTranslation()
   const { ticketId } = useParams()
 
   return (
-    <section className="page-shell" aria-label="Ticket details">
+    <section className="page-shell" aria-label={t('ticketDetail.aria')}>
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/search">Search</Link>
+        <Link to="/search">{t('ticketDetail.search')}</Link>
         <span aria-hidden="true"> / </span>
-        <Link to="/search/results">Results</Link>
+        <Link to="/search/results">{t('ticketDetail.results')}</Link>
         <span aria-hidden="true"> / </span>
-        <span>Ticket</span>
+        <span>{t('ticketDetail.ticket')}</span>
       </nav>
 
       <header className="page-header">
-        <h1 className="page-title">Flight details</h1>
-        <p className="page-muted">Ticket ID: {ticketId ?? '—'}</p>
+        <h1 className="page-title">{t('ticketDetail.title')}</h1>
+        <p className="page-muted">
+          {t('ticketDetail.ticketId')} {ticketId ?? '—'}
+        </p>
       </header>
 
       <div className="detail-grid">
         <div className="detail-card">
-          <h2>Itinerary</h2>
+          <h2>{t('ticketDetail.itinerary')}</h2>
           <ul className="detail-list">
             <li>
-              <strong>Outbound</strong> — SVO 08:40 → IST 13:20
+              <strong>{t('ticketDetail.outbound')}</strong> — SVO 08:40 → IST 13:20
             </li>
             <li>
-              <strong>Return</strong> — IST 18:10 → SVO 21:35
+              <strong>{t('ticketDetail.return')}</strong> — IST 18:10 → SVO 21:35
             </li>
           </ul>
           <label className="field-block">
-            <span>Baggage</span>
+            <span>{t('ticketDetail.baggage')}</span>
             <select defaultValue="standard">
-              <option value="standard">1×23 kg included</option>
-              <option value="plus">Extra bag (+$45)</option>
+              <option value="standard">{t('ticketDetail.baggageStandard')}</option>
+              <option value="plus">{t('ticketDetail.baggagePlus')}</option>
             </select>
           </label>
         </div>
         <div className="detail-card">
-          <h2>Fare rules</h2>
-          <p className="page-muted">Non-refundable. Changes for a fee. Seat selection optional.</p>
+          <h2>{t('ticketDetail.fareRules')}</h2>
+          <p className="page-muted">{t('ticketDetail.fareLead')}</p>
           <div className="detail-actions">
             <Link to="/booking" className="primary-button">
-              Continue to booking
+              {t('ticketDetail.continueBooking')}
             </Link>
             <button type="button" className="secondary-button">
-              Add to favorites
+              {t('ticketDetail.addFavorites')}
             </button>
           </div>
         </div>

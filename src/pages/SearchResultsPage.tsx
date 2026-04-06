@@ -1,66 +1,69 @@
 // Результаты поиска: фильтры и список предложений (данные статические).
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 function SearchResultsPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell" aria-label="Search results">
+    <section className="page-shell" aria-label={t('searchResults.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Search results</h1>
-        <p className="page-lead">Refine results with filters and open a ticket for details.</p>
+        <h1 className="page-title">{t('searchResults.title')}</h1>
+        <p className="page-lead">{t('searchResults.lead')}</p>
       </header>
 
       <div className="results-layout">
-        <aside className="results-filters" aria-label="Filters">
-          <h2 className="filters-title">Filters</h2>
+        <aside className="results-filters" aria-label={t('searchResults.filtersAria')}>
+          <h2 className="filters-title">{t('searchResults.filters')}</h2>
           <label className="filter-block">
-            <span>Max price</span>
+            <span>{t('searchResults.maxPrice')}</span>
             <input type="range" min={0} max={2000} defaultValue={800} />
           </label>
           <fieldset className="filter-block">
-            <legend>Stops</legend>
+            <legend>{t('searchResults.stops')}</legend>
             <label>
-              <input type="checkbox" name="stops" /> Any
+              <input type="checkbox" name="stops" /> {t('searchResults.any')}
             </label>
             <label>
-              <input type="checkbox" name="stops" /> Non-stop
+              <input type="checkbox" name="stops" /> {t('searchResults.nonStop')}
             </label>
             <label>
-              <input type="checkbox" name="stops" /> 1 stop
+              <input type="checkbox" name="stops" /> {t('searchResults.oneStop')}
             </label>
           </fieldset>
           <label className="filter-block">
-            <span>Airlines</span>
+            <span>{t('searchResults.airlines')}</span>
             <select multiple size={4} defaultValue={[]}>
-              <option value="">All airlines</option>
+              <option value="">{t('searchResults.allAirlines')}</option>
               <option value="a1">Airline A</option>
               <option value="a2">Airline B</option>
             </select>
           </label>
           <label className="filter-block">
-            <span>Departure time</span>
-            <input type="text" placeholder="e.g. morning" />
+            <span>{t('searchResults.departureTime')}</span>
+            <input type="text" placeholder={t('searchResults.depPlaceholder')} />
           </label>
           <button type="button" className="secondary-button">
-            Reset filters
+            {t('searchResults.resetFilters')}
           </button>
         </aside>
 
         <div className="results-main">
           <div className="results-toolbar">
             <label className="field-inline">
-              <span>Sort</span>
+              <span>{t('searchResults.sort')}</span>
               <select defaultValue="price">
-                <option value="price">Price</option>
-                <option value="duration">Duration</option>
-                <option value="departure">Departure time</option>
+                <option value="price">{t('searchResults.price')}</option>
+                <option value="duration">{t('searchResults.duration')}</option>
+                <option value="departure">{t('searchResults.departure')}</option>
               </select>
             </label>
             <div className="toolbar-actions">
               <button type="button" className="ghost-button small">
-                Save search
+                {t('searchResults.saveSearch')}
               </button>
               <button type="button" className="ghost-button small">
-                Share
+                {t('searchResults.share')}
               </button>
             </div>
           </div>
@@ -74,9 +77,9 @@ function SearchResultsPage() {
                   <p className="date">28 Mar · 3h 40m · direct</p>
                 </div>
                 <div className="ticket-card-right">
-                  <p className="price">from $189</p>
+                  <p className="price">{t('searchResults.fromPrice')}</p>
                   <Link to="/search/results/demo-ticket-1" className="text-button">
-                    Select
+                    {t('searchResults.select')}
                   </Link>
                 </div>
               </article>
@@ -89,9 +92,9 @@ function SearchResultsPage() {
                   <p className="date">28 Mar · 5h 10m · 1 stop</p>
                 </div>
                 <div className="ticket-card-right">
-                  <p className="price">from $156</p>
+                  <p className="price">{t('searchResults.fromPrice2')}</p>
                   <Link to="/search/results/demo-ticket-2" className="text-button">
-                    Select
+                    {t('searchResults.select')}
                   </Link>
                 </div>
               </article>

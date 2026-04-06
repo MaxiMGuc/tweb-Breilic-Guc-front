@@ -1,35 +1,44 @@
 // Регистрация пользователя.
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import EmailField from '../components/form/EmailField'
+import PasswordField from '../components/form/PasswordField'
 
 function RegisterPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell page-auth" aria-label="Register">
+    <section className="page-shell page-auth" aria-label={t('register.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Create account</h1>
+        <h1 className="page-title">{t('register.title')}</h1>
         <p className="page-lead">
-          Already have an account? <Link to="/auth/login">Log in</Link>
+          {t('register.lead')}{' '}
+          <Link to="/auth/login">{t('register.logInLink')}</Link>
         </p>
       </header>
 
-      <form className="auth-form">
-        <label className="field-block">
-          <span>Email</span>
-          <input type="email" autoComplete="email" />
-        </label>
-        <label className="field-block">
-          <span>Password</span>
-          <input type="password" autoComplete="new-password" />
-        </label>
-        <label className="field-block">
-          <span>Confirm password</span>
-          <input type="password" autoComplete="new-password" />
-        </label>
+      <form className="auth-form" noValidate>
+        <EmailField label={t('common.email')} name="email" autoComplete="email" required />
+        <PasswordField
+          label={t('common.password')}
+          name="password"
+          autoComplete="new-password"
+          showStrengthHint
+          required
+        />
+        <PasswordField
+          label={t('register.confirmPassword')}
+          name="confirmPassword"
+          autoComplete="new-password"
+          minLength={8}
+          required
+        />
         <label className="checkbox-row">
           <input type="checkbox" />
-          I agree to the terms of service and privacy policy
+          {t('register.terms')}
         </label>
         <button type="button" className="primary-button wide">
-          Register
+          {t('register.submit')}
         </button>
       </form>
     </section>

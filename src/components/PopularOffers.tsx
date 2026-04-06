@@ -1,5 +1,6 @@
 // Компонент списка популярных предложений.
 // Принимает массив билетов и отображает карточки в едином стиле.
+import { useTranslation } from 'react-i18next'
 import type { Ticket } from '../data/popularTickets'
 
 type PopularOffersProps = {
@@ -8,11 +9,13 @@ type PopularOffersProps = {
 
 // Отдельный UI-блок главной страницы, чтобы не перегружать HomePage разметкой.
 function PopularOffers({ tickets }: PopularOffersProps) {
+  const { t } = useTranslation()
+
   return (
-    <section className="results" aria-label="Popular offers">
+    <section className="results" aria-label={t('home.popularAria')}>
       <div className="results-header">
-        <h2>Popular offers</h2>
-        <a href="/">See all</a>
+        <h2>{t('home.popularOffers')}</h2>
+        <a href="/">{t('home.seeAll')}</a>
       </div>
       <ul className="ticket-list">
         {tickets.map((ticket) => (
