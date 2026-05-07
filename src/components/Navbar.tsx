@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext.tsx'
 type MenuId = 'flights' | 'booking' | 'help' | 'account' | 'admin'
 
 function Navbar() {
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, role, logout } = useAuth()
   const [openMenu, setOpenMenu] = useState<MenuId | null>(null)
   const navRef = useRef<HTMLElement>(null)
   const baseId = useId()
@@ -206,36 +206,38 @@ function Navbar() {
           </>,
         )}
 
-        {dropdown(
-          'admin',
-          'Admin',
-          <>
-            <NavLink
-              to="/admin/flights"
-              className="nav-dropdown-link"
-              role="menuitem"
-              onClick={closeMenus}
-            >
-              Flights
-            </NavLink>
-            <NavLink
-              to="/admin/users"
-              className="nav-dropdown-link"
-              role="menuitem"
-              onClick={closeMenus}
-            >
-              Users
-            </NavLink>
-            <NavLink
-              to="/admin/bookings"
-              className="nav-dropdown-link"
-              role="menuitem"
-              onClick={closeMenus}
-            >
-              Bookings
-            </NavLink>
-          </>,
-        )}
+        {isAuthenticated && role === 'admin'
+          ? dropdown(
+              'admin',
+              'Admin',
+              <>
+                <NavLink
+                  to="/admin/flights"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  Flights
+                </NavLink>
+                <NavLink
+                  to="/admin/users"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  Users
+                </NavLink>
+                <NavLink
+                  to="/admin/bookings"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  Bookings
+                </NavLink>
+              </>,
+            )
+          : null}
       </nav>
 
       <div className="topbar-actions">

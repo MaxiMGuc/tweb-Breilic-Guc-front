@@ -44,13 +44,62 @@ createRoot(document.getElementById('root')!).render(
           <Route path="search" element={<SearchPage />} />
           <Route path="search/results" element={<SearchResultsPage />} />
           <Route path="search/results/:ticketId" element={<TicketDetailPage />} />
-          <Route path="booking" element={<BookingPage />} />
-          <Route path="booking/passengers" element={<PassengersPage />} />
-          <Route path="booking/payment" element={<PaymentPage />} />
-          <Route path="booking/success" element={<BookingSuccessPage />} />
-          <Route path="my-trips" element={<MyTripsPage />} />
-          <Route path="my-trips/:id" element={<TripDetailPage />} />
-          <Route path="account" element={<AccountPage />} />
+          <Route
+            path="booking"
+            element={
+              <RequireAuth>
+                <BookingPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="booking/passengers"
+            element={
+              <RequireAuth>
+                <PassengersPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="booking/payment"
+            element={
+              <RequireAuth>
+                <PaymentPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="booking/success"
+            element={
+              <RequireAuth>
+                <BookingSuccessPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="my-trips"
+            element={
+              <RequireAuth>
+                <MyTripsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="my-trips/:id"
+            element={
+              <RequireAuth>
+                <TripDetailPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="account"
+            element={
+              <RequireAuth>
+                <AccountPage />
+              </RequireAuth>
+            }
+          />
           <Route path="auth" element={<AuthLayout />}>
             <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<LoginPage />} />
@@ -80,15 +129,43 @@ createRoot(document.getElementById('root')!).render(
               </RequireAuth>
             }
           />
-          <Route path="favorites" element={<FavoritesPage />} />
+          <Route
+            path="favorites"
+            element={
+              <RequireAuth>
+                <FavoritesPage />
+              </RequireAuth>
+            }
+          />
           <Route path="help" element={<HelpLayout />}>
             <Route index element={<HelpPage />} />
             <Route path="faq" element={<HelpFAQPage />} />
             <Route path="support" element={<SupportPage />} />
           </Route>
-          <Route path="admin/flights" element={<AdminFlightsPage />} />
-          <Route path="admin/users" element={<AdminUsersPage />} />
-          <Route path="admin/bookings" element={<AdminBookingsPage />} />
+          <Route
+            path="admin/flights"
+            element={
+              <RequireAuth allowedRoles={['admin']}>
+                <AdminFlightsPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="admin/users"
+            element={
+              <RequireAuth allowedRoles={['admin']}>
+                <AdminUsersPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="admin/bookings"
+            element={
+              <RequireAuth allowedRoles={['admin']}>
+                <AdminBookingsPage />
+              </RequireAuth>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
