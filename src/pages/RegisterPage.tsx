@@ -1,9 +1,13 @@
-// Регистрация: mock — сохранение сессии и переход в профиль (T39).
+// Регистрация: mock — сохранение сессии и переход в профиль.
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
+import EmailField from '../components/form/EmailField'
+import PasswordField from '../components/form/PasswordField'
 import { useAuth } from '../context/AuthContext.tsx'
 
 function RegisterPage() {
+  const { t } = useTranslation()
   const { login } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
@@ -14,16 +18,16 @@ function RegisterPage() {
     const pass = String(fd.get('password') ?? '')
     const confirm = String(fd.get('confirm') ?? '')
     const terms = fd.get('terms') === 'on'
-    if (pass.length < 4) {
-      setError('Password must be at least 4 characters (demo).')
+    if (pass.length < 8) {
+      setError(t('register.errPasswordShort'))
       return
     }
     if (pass !== confirm) {
-      setError('Passwords do not match.')
+      setError(t('register.errMismatch'))
       return
     }
     if (!terms) {
-      setError('Please accept the terms to continue.')
+      setError(t('register.errTerms'))
       return
     }
     setError(null)
@@ -33,35 +37,40 @@ function RegisterPage() {
   }
 
   return (
-    <section className="page-shell page-auth" aria-label="Register">
+    <section className="page-shell page-auth" aria-label={t('register.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Create account</h1>
+        <h1 className="page-title">{t('register.title')}</h1>
         <p className="page-lead">
-          Already have an account? <Link to="/auth/login">Log in</Link>
+          {t('register.lead')}{' '}
+          <Link to="/auth/login">{t('register.logInLink')}</Link>
         </p>
       </header>
 
       {error ? <p className="page-muted">{error}</p> : null}
 
       <form className="auth-form" onSubmit={handleRegister}>
-        <label className="field-block">
-          <span>Email</span>
-          <input name="email" type="email" autoComplete="email" required />
-        </label>
-        <label className="field-block">
-          <span>Password</span>
-          <input name="password" type="password" autoComplete="new-password" required />
-        </label>
-        <label className="field-block">
-          <span>Confirm password</span>
-          <input name="confirm" type="password" autoComplete="new-password" required />
-        </label>
+        <EmailField label={t('common.email')} name="email" autoComplete="email" required />
+        <PasswordField
+          label={t('common.password')}
+          name="password"
+          autoComplete="new-password"
+          showStrengthHint
+          required
+        />
+        <PasswordField
+          label={t('register.confirmPassword')}
+          name="confirm"
+          autoComplete="new-password"
+          minLength={8}
+          showStrengthHint={false}
+          required
+        />
         <label className="checkbox-row">
           <input name="terms" type="checkbox" />
-          I agree to the terms of service and privacy policy
+          {t('register.terms')}
         </label>
         <button type="submit" className="primary-button wide">
-          Register
+          {t('register.submit')}
         </button>
       </form>
     </section>

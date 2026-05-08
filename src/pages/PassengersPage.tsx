@@ -1,57 +1,60 @@
 // Данные пассажиров для бронирования.
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 function PassengersPage() {
+  const { t } = useTranslation()
+
   return (
-    <section className="page-shell" aria-label="Passenger details">
-      <ol className="booking-steps" aria-label="Booking progress">
+    <section className="page-shell" aria-label={t('passengers.aria')}>
+      <ol className="booking-steps" aria-label={t('bookingFlow.stepsAria')}>
         <li>
-          <Link to="/booking">Overview</Link>
+          <Link to="/booking">{t('bookingFlow.overview')}</Link>
         </li>
-        <li className="active">Passengers</li>
+        <li className="active">{t('bookingFlow.passengers')}</li>
         <li>
-          <Link to="/booking/payment">Payment</Link>
+          <Link to="/booking/payment">{t('bookingFlow.payment')}</Link>
         </li>
-        <li>Confirmation</li>
+        <li>{t('bookingFlow.confirmation')}</li>
       </ol>
 
       <header className="page-header">
-        <h1 className="page-title">Passenger details</h1>
-        <p className="page-lead">Names must match travel documents exactly.</p>
+        <h1 className="page-title">{t('passengers.title')}</h1>
+        <p className="page-lead">{t('passengers.lead')}</p>
       </header>
 
       <form className="stack-form">
         <fieldset className="fieldset-card">
-          <legend>Adult 1</legend>
+          <legend>{t('passengers.adult1')}</legend>
           <div className="form-grid-2">
             <label className="field-block">
-              <span>First name</span>
+              <span>{t('passengers.firstName')}</span>
               <input type="text" autoComplete="given-name" />
             </label>
             <label className="field-block">
-              <span>Last name</span>
+              <span>{t('passengers.lastName')}</span>
               <input type="text" autoComplete="family-name" />
             </label>
             <label className="field-block">
-              <span>Date of birth</span>
+              <span>{t('passengers.dob')}</span>
               <input type="date" />
             </label>
             <label className="field-block">
-              <span>Gender</span>
+              <span>{t('passengers.gender')}</span>
               <select defaultValue="">
                 <option value="" disabled>
-                  Select
+                  {t('passengers.select')}
                 </option>
-                <option value="f">Female</option>
-                <option value="m">Male</option>
+                <option value="f">{t('passengers.female')}</option>
+                <option value="m">{t('passengers.male')}</option>
               </select>
             </label>
             <label className="field-block">
-              <span>Document number</span>
+              <span>{t('passengers.documentNumber')}</span>
               <input type="text" autoComplete="off" />
             </label>
             <label className="field-block">
-              <span>Expiry date</span>
+              <span>{t('passengers.expiry')}</span>
               <input type="date" />
             </label>
           </div>
@@ -59,15 +62,15 @@ function PassengersPage() {
 
         <label className="checkbox-row">
           <input type="checkbox" />
-          Add frequent flyer number
+          {t('passengers.frequentFlyer')}
         </label>
 
         <div className="detail-actions">
           <Link to="/booking/payment" className="primary-button">
-            Continue to payment
+            {t('passengers.continuePayment')}
           </Link>
           <Link to="/booking" className="text-button">
-            Back
+            {t('passengers.back')}
           </Link>
         </div>
       </form>

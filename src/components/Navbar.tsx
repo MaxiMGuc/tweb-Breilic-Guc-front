@@ -1,12 +1,14 @@
-// Верхняя панель навигации: выпадающие меню с единовременно одним открытым блоком (T01),
-// mock-auth для видимости пунктов (T02–T04).
+// Верхняя панель навигации: один открытый выпадающий блок, mock-auth, i18n.
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.tsx'
+import LanguageSwitcher from './LanguageSwitcher'
 
 type MenuId = 'flights' | 'booking' | 'help' | 'account' | 'admin'
 
 function Navbar() {
+  const { t } = useTranslation()
   const { isAuthenticated, role, logout } = useAuth()
   const [openMenu, setOpenMenu] = useState<MenuId | null>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -66,17 +68,17 @@ function Navbar() {
 
   return (
     <header className="topbar">
-      <NavLink to="/" className="brand" aria-label="Go to home page">
-        Aviasales
+      <NavLink to="/" className="brand" aria-label={t('nav.brandAria')}>
+        {t('nav.brand')}
       </NavLink>
 
       <nav ref={navRef} className="topbar-menu" aria-label="Main services">
         {dropdown(
           'flights',
-          'Flights',
+          t('nav.flights'),
           <>
             <NavLink to="/search" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              Search tickets
+              {t('nav.searchTickets')}
             </NavLink>
             <NavLink
               to="/search/results"
@@ -84,17 +86,17 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Search results
+              {t('nav.searchResults')}
             </NavLink>
           </>,
         )}
 
         {dropdown(
           'booking',
-          'Booking',
+          t('nav.booking'),
           <>
             <NavLink to="/booking" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              Overview
+              {t('nav.overview')}
             </NavLink>
             <NavLink
               to="/booking/passengers"
@@ -102,7 +104,7 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Passengers
+              {t('nav.passengers')}
             </NavLink>
             <NavLink
               to="/booking/payment"
@@ -110,7 +112,7 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Payment
+              {t('nav.payment')}
             </NavLink>
             <NavLink
               to="/booking/success"
@@ -118,7 +120,7 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Success
+              {t('nav.success')}
             </NavLink>
           </>,
         )}
@@ -126,25 +128,27 @@ function Navbar() {
         <NavLink
           to="/my-trips"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
+          onClick={closeMenus}
         >
-          My trips
+          {t('nav.myTrips')}
         </NavLink>
         <NavLink
           to="/favorites"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
+          onClick={closeMenus}
         >
-          Favorites
+          {t('nav.favorites')}
         </NavLink>
 
         {dropdown(
           'help',
-          'Help',
+          t('nav.help'),
           <>
             <NavLink to="/help" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              Help center
+              {t('nav.helpCenter')}
             </NavLink>
             <NavLink to="/help/faq" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              FAQ
+              {t('nav.faq')}
             </NavLink>
             <NavLink
               to="/help/support"
@@ -152,20 +156,20 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Support
+              {t('nav.support')}
             </NavLink>
           </>,
         )}
 
         {dropdown(
           'account',
-          'Account',
+          t('nav.account'),
           <>
             <NavLink to="/account" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              Account
+              {t('nav.account')}
             </NavLink>
             <NavLink to="/profile" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
-              Profile
+              {t('nav.profile')}
             </NavLink>
             <NavLink
               to="/profile/settings"
@@ -173,7 +177,7 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              Settings
+              {t('nav.settings')}
             </NavLink>
             <NavLink
               to="/profile/history"
@@ -181,7 +185,7 @@ function Navbar() {
               role="menuitem"
               onClick={closeMenus}
             >
-              History
+              {t('nav.history')}
             </NavLink>
             {!isAuthenticated ? (
               <>
@@ -191,7 +195,7 @@ function Navbar() {
                   role="menuitem"
                   onClick={closeMenus}
                 >
-                  Log in
+                  {t('nav.logIn')}
                 </NavLink>
                 <NavLink
                   to="/auth/register"
@@ -199,7 +203,7 @@ function Navbar() {
                   role="menuitem"
                   onClick={closeMenus}
                 >
-                  Register
+                  {t('nav.register')}
                 </NavLink>
               </>
             ) : null}
@@ -209,7 +213,7 @@ function Navbar() {
         {isAuthenticated && role === 'admin'
           ? dropdown(
               'admin',
-              'Admin',
+              t('nav.admin'),
               <>
                 <NavLink
                   to="/admin/flights"
@@ -217,7 +221,7 @@ function Navbar() {
                   role="menuitem"
                   onClick={closeMenus}
                 >
-                  Flights
+                  {t('nav.adminFlights')}
                 </NavLink>
                 <NavLink
                   to="/admin/users"
@@ -225,7 +229,7 @@ function Navbar() {
                   role="menuitem"
                   onClick={closeMenus}
                 >
-                  Users
+                  {t('nav.adminUsers')}
                 </NavLink>
                 <NavLink
                   to="/admin/bookings"
@@ -233,7 +237,7 @@ function Navbar() {
                   role="menuitem"
                   onClick={closeMenus}
                 >
-                  Bookings
+                  {t('nav.adminBookings')}
                 </NavLink>
               </>,
             )
@@ -241,22 +245,23 @@ function Navbar() {
       </nav>
 
       <div className="topbar-actions">
+        <LanguageSwitcher />
         {isAuthenticated ? (
           <>
-            <NavLink to="/profile" className="ghost-button">
-              Profile
+            <NavLink to="/profile" className="ghost-button" onClick={closeMenus}>
+              {t('nav.profile')}
             </NavLink>
             <button type="button" className="primary-outline-button" onClick={() => logout()}>
-              Log out
+              {t('account.logout')}
             </button>
           </>
         ) : (
           <>
-            <NavLink to="/auth/login" className="ghost-button">
-              Log in
+            <NavLink to="/auth/login" className="ghost-button" onClick={closeMenus}>
+              {t('nav.logIn')}
             </NavLink>
-            <NavLink to="/auth/register" className="primary-outline-button">
-              Sign up
+            <NavLink to="/auth/register" className="primary-outline-button" onClick={closeMenus}>
+              {t('nav.signUp')}
             </NavLink>
           </>
         )}

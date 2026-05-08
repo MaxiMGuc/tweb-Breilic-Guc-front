@@ -1,5 +1,6 @@
-// Детали выбранного билета: багаж (mock), избранное в localStorage, контекст брони (T19–T21).
+// Детали выбранного билета: багаж, избранное, контекст брони.
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { searchService } from '../api/index.ts'
 import { LS_FAVORITE_TICKET_IDS } from '../constants/storageKeys.ts'
@@ -13,6 +14,7 @@ function readFavoriteIds(): string[] {
 }
 
 function TicketDetailPage() {
+  const { t } = useTranslation()
   const { ticketId } = useParams()
   const navigate = useNavigate()
   const { selectedOffer, setSelectedOffer, baggageOption, setBaggageOption, baggageExtraUsd } =
@@ -65,66 +67,74 @@ function TicketDetailPage() {
 
   if (!ticket) {
     return (
-      <section className="page-shell" aria-label="Ticket details">
-        <p className="page-muted">Ticket not found.</p>
+      <section className="page-shell" aria-label={t('ticketDetail.aria')}>
+        <p className="page-muted">{t('ticketDetail.notFound')}</p>
         <Link to="/search/results" className="text-button">
-          Back to search results
+          {t('ticketDetail.backToResults')}
         </Link>
       </section>
     )
   }
 
   return (
-    <section className="page-shell" aria-label="Ticket details">
+    <section className="page-shell" aria-label={t('ticketDetail.aria')}>
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/search">Search</Link>
+        <Link to="/search">{t('ticketDetail.search')}</Link>
         <span aria-hidden="true"> / </span>
-        <Link to="/search/results">Results</Link>
+        <Link to="/search/results">{t('ticketDetail.results')}</Link>
         <span aria-hidden="true"> / </span>
-        <span>Ticket</span>
+        <span>{t('ticketDetail.ticket')}</span>
       </nav>
 
       <header className="page-header">
-        <h1 className="page-title">Flight details</h1>
-        <p className="page-muted">Ticket ID: {ticketId ?? '—'}</p>
+        <h1 className="page-title">{t('ticketDetail.title')}</h1>
+        <p className="page-muted">
+          {t('ticketDetail.ticketId')} {ticketId ?? '—'}
+        </p>
       </header>
 
       <div className="detail-grid">
         <div className="detail-card">
-          <h2>Itinerary</h2>
+          <h2>{t('ticketDetail.itinerary')}</h2>
           <ul className="detail-list">
             <li>
-              <strong>Outbound</strong> — SVO 08:40 → IST 13:20
+              <strong>{t('ticketDetail.outbound')}</strong> — SVO 08:40 → IST 13:20
             </li>
             <li>
-              <strong>Return</strong> — IST 18:10 → SVO 21:35
+              <strong>{t('ticketDetail.return')}</strong> — IST 18:10 → SVO 21:35
             </li>
           </ul>
           <label className="field-block">
-            <span>Baggage</span>
+            <span>{t('ticketDetail.baggage')}</span>
             <select
               value={baggageOption}
               onChange={(e) => setBaggageOption(e.target.value as 'standard' | 'plus')}
             >
-              <option value="standard">1×23 kg included</option>
-              <option value="plus">Extra bag (+$45)</option>
+              <option value="standard">{t('ticketDetail.baggageStandard')}</option>
+              <option value="plus">{t('ticketDetail.baggagePlus')}</option>
             </select>
           </label>
           <p className="page-muted" style={{ marginTop: 8 }}>
-            Fare subtotal: ${basePrice}
-            {baggageOption === 'plus' ? ` + baggage $${baggageExtraUsd}` : ''} · Estimated total: $
-            {totalPreview} (mock)
+            {t('ticketDetail.fareSubtotal')} ${basePrice}
+            {baggageOption === 'plus'
+              ? ` · ${t('ticketDetail.baggageExtraShort', { amount: baggageExtraUsd })}`
+              : ''}{' '}
+            · {t('ticketDetail.estimatedTotal')} ${totalPreview}
           </p>
         </div>
         <div className="detail-card">
-          <h2>Fare rules</h2>
-          <p className="page-muted">Non-refundable. Changes for a fee. Seat selection optional.</p>
+          <h2>{t('ticketDetail.fareRules')}</h2>
+          <p className="page-muted">{t('ticketDetail.fareLead')}</p>
           <div className="detail-actions">
             <button type="button" className="primary-button" onClick={continueBooking}>
-              Continue to booking
+              {t('ticketDetail.continueBooking')}
             </button>
-            <button type="button" className={`secondary-button ${isFavorite ? 'active' : ''}`} onClick={toggleFavorite}>
-              {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            <button
+              type="button"
+              className={`secondary-button ${isFavorite ? 'active' : ''}`}
+              onClick={toggleFavorite}
+            >
+              {isFavorite ? t('ticketDetail.removeFavorites') : t('ticketDetail.addFavorites')}
             </button>
           </div>
         </div>

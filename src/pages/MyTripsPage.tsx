@@ -1,5 +1,6 @@
-// Список поездок: мок-данные, фильтр по статусу и поиск (T31).
+// Список поездок: мок-данные, фильтр по статусу и поиск.
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { tripsService } from '../api/index.ts'
 import type { MockTrip, TripStatus } from '../data/mockTrips.ts'
@@ -7,6 +8,7 @@ import type { MockTrip, TripStatus } from '../data/mockTrips.ts'
 type StatusFilter = 'all' | TripStatus
 
 function MyTripsPage() {
+  const { t } = useTranslation()
   const [status, setStatus] = useState<StatusFilter>('all')
   const [query, setQuery] = useState('')
   const [filtered, setFiltered] = useState<MockTrip[]>([])
@@ -21,49 +23,47 @@ function MyTripsPage() {
   }, [query, status])
 
   return (
-    <section className="page-shell" aria-label="My trips">
+    <section className="page-shell" aria-label={t('myTrips.aria')}>
       <header className="page-header">
-        <h1 className="page-title">My trips</h1>
-        <p className="page-lead">Upcoming and past bookings (mock data on this device).</p>
+        <h1 className="page-title">{t('myTrips.title')}</h1>
+        <p className="page-lead">{t('myTrips.lead')}</p>
       </header>
 
       <div className="results-toolbar">
         <label className="field-inline">
-          <span>Status</span>
+          <span>{t('myTrips.status')}</span>
           <select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
-            <option value="all">All</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="past">Past</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="all">{t('myTrips.all')}</option>
+            <option value="upcoming">{t('myTrips.upcoming')}</option>
+            <option value="past">{t('myTrips.past')}</option>
+            <option value="cancelled">{t('myTrips.cancelled')}</option>
           </select>
         </label>
         <input
           type="search"
           className="search-input-wide"
-          placeholder="Search by city or PNR…"
+          placeholder={t('myTrips.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Search trips"
+          aria-label={t('myTrips.searchTripsAria')}
         />
       </div>
 
       <ul className="trips-list">
-        {filtered.length === 0 ? (
-          <li className="page-muted">No trips match your filters.</li>
-        ) : null}
-        {filtered.map((t) => (
-          <li key={t.id}>
+        {filtered.length === 0 ? <li className="page-muted">{t('myTrips.noMatches')}</li> : null}
+        {filtered.map((trip) => (
+          <li key={trip.id}>
             <article className="trip-card">
               <div>
                 <p className="trip-route">
-                  {t.cityHint} · {t.dateRange}
+                  {trip.cityHint} · {trip.dateRange}
                 </p>
                 <p className="page-muted">
-                  Booking ref: {t.pnr} · {t.status}
+                  {t('myTrips.bookingRef')} {trip.pnr} · {trip.status}
                 </p>
               </div>
-              <Link to={`/my-trips/${t.id}`} className="text-button">
-                Open
+              <Link to={`/my-trips/${trip.id}`} className="text-button">
+                {t('myTrips.open')}
               </Link>
             </article>
           </li>

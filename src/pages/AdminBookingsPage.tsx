@@ -1,9 +1,11 @@
-// Админ: бронирования — поиск по ref/route, фильтр по датам, превью Open (T58, T59).
+// Админ: бронирования — фильтры и превью Open.
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminService } from '../api/index.ts'
 import type { MockAdminBooking } from '../data/mockAdmin.ts'
 
 function AdminBookingsPage() {
+  const { t } = useTranslation()
   const [query, setQuery] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -20,36 +22,36 @@ function AdminBookingsPage() {
   }, [dateFrom, dateTo, query])
 
   return (
-    <section className="page-shell page-admin" aria-label="Admin bookings">
+    <section className="page-shell page-admin" aria-label={t('adminBookings.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Admin · Bookings</h1>
-        <p className="page-lead">Inspect and assist with reservations (mock).</p>
+        <h1 className="page-title">{t('adminBookings.title')}</h1>
+        <p className="page-lead">{t('adminBookings.lead')}</p>
       </header>
 
       <div className="admin-toolbar">
         <input
           type="search"
           className="search-input-wide"
-          placeholder="PNR or booking ref…"
+          placeholder={t('adminBookings.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Filter bookings"
+          aria-label={t('adminBookings.filterAria')}
         />
         <label className="field-inline">
-          <span>Date from</span>
+          <span>{t('adminBookings.dateFrom')}</span>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
         </label>
         <label className="field-inline">
-          <span>Date to</span>
+          <span>{t('adminBookings.dateTo')}</span>
           <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </label>
       </div>
 
       {selected ? (
         <p className="page-muted">
-          Preview booking <strong>{selected.ref}</strong> — detail view would call API.{' '}
+          {t('adminBookings.previewLine', { ref: selected.ref })}{' '}
           <button type="button" className="text-button" onClick={() => setSelected(null)}>
-            Clear
+            {t('adminBookings.clearPreview')}
           </button>
         </p>
       ) : null}
@@ -58,10 +60,10 @@ function AdminBookingsPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Ref</th>
-              <th>Route</th>
-              <th>Created</th>
-              <th>Status</th>
+              <th>{t('adminBookings.colRef')}</th>
+              <th>{t('adminBookings.colRoute')}</th>
+              <th>{t('adminBookings.colCreated')}</th>
+              <th>{t('adminBookings.colStatus')}</th>
               <th />
             </tr>
           </thead>
@@ -80,7 +82,7 @@ function AdminBookingsPage() {
                 </td>
                 <td>
                   <button type="button" className="text-button" onClick={() => setSelected(b)}>
-                    Open
+                    {t('adminBookings.open')}
                   </button>
                 </td>
               </tr>

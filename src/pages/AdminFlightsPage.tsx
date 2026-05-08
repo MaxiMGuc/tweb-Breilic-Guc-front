@@ -1,5 +1,6 @@
 // Админ: рейсы — клиентский поиск по мок-таблице (T53).
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 type FlightRow = {
   flight: string
@@ -15,6 +16,7 @@ const MOCK_ROWS: FlightRow[] = [
 ]
 
 function AdminFlightsPage() {
+  const { t } = useTranslation()
   const [query, setQuery] = useState('')
 
   const rows = useMemo(() => {
@@ -29,23 +31,23 @@ function AdminFlightsPage() {
   }, [query])
 
   return (
-    <section className="page-shell page-admin" aria-label="Admin flights">
+    <section className="page-shell page-admin" aria-label={t('adminFlights.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Admin · Flights</h1>
-        <p className="page-lead">Manage flight records and schedules.</p>
+        <h1 className="page-title">{t('adminFlights.title')}</h1>
+        <p className="page-lead">{t('adminFlights.lead')}</p>
       </header>
 
       <div className="admin-toolbar">
         <input
           type="search"
           className="search-input-wide"
-          placeholder="Search by flight number…"
+          placeholder={t('adminFlights.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Filter flights"
+          aria-label={t('adminFlights.filterAria')}
         />
         <button type="button" className="primary-button">
-          Add flight
+          {t('adminFlights.addFlight')}
         </button>
       </div>
 
@@ -53,10 +55,10 @@ function AdminFlightsPage() {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Flight</th>
-              <th>Route</th>
-              <th>Departure</th>
-              <th>Status</th>
+              <th>{t('adminFlights.colFlight')}</th>
+              <th>{t('adminFlights.colRoute')}</th>
+              <th>{t('adminFlights.colDeparture')}</th>
+              <th>{t('adminFlights.colStatus')}</th>
               <th />
             </tr>
           </thead>
@@ -64,7 +66,7 @@ function AdminFlightsPage() {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={5} className="page-muted">
-                  No flights match “{query}”.
+                  {t('adminFlights.noMatches', { query })}
                 </td>
               </tr>
             ) : null}
@@ -74,11 +76,11 @@ function AdminFlightsPage() {
                 <td>{row.route}</td>
                 <td>{row.departure}</td>
                 <td>
-                  <span className="badge">{row.status}</span>
+                  <span className="badge">{t('adminFlights.scheduled')}</span>
                 </td>
                 <td>
                   <button type="button" className="text-button">
-                    Edit
+                    {t('adminFlights.edit')}
                   </button>
                 </td>
               </tr>

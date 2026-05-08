@@ -1,5 +1,6 @@
 // Оплата: в sessionStorage сохраняются только безопасные billing-поля (без данных карты).
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { SS_PAYMENT_DRAFT } from '../constants/storageKeys.ts'
 import { readVersionedStorage, writeVersionedStorage } from '../utils/storage.ts'
@@ -36,6 +37,7 @@ function loadDraft(): PaymentDraft {
 }
 
 function PaymentPage() {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState<PaymentDraft>(() => loadDraft())
 
   useEffect(() => {
@@ -53,30 +55,30 @@ function PaymentPage() {
   }
 
   return (
-    <section className="page-shell" aria-label="Payment">
-      <ol className="booking-steps" aria-label="Booking progress">
+    <section className="page-shell" aria-label={t('payment.aria')}>
+      <ol className="booking-steps" aria-label={t('bookingFlow.stepsAria')}>
         <li>
-          <Link to="/booking">Overview</Link>
+          <Link to="/booking">{t('bookingFlow.overview')}</Link>
         </li>
         <li>
-          <Link to="/booking/passengers">Passengers</Link>
+          <Link to="/booking/passengers">{t('bookingFlow.passengers')}</Link>
         </li>
-        <li className="active">Payment</li>
-        <li>Confirmation</li>
+        <li className="active">{t('bookingFlow.payment')}</li>
+        <li>{t('bookingFlow.confirmation')}</li>
       </ol>
 
       <header className="page-header">
-        <h1 className="page-title">Payment</h1>
+        <h1 className="page-title">{t('payment.title')}</h1>
         <p className="page-lead">
-          Total due: <strong>$412.00</strong> (placeholder)
+          {t('payment.leadPrefix')} <strong>$412.00</strong> {t('payment.leadSuffix')}
         </p>
       </header>
 
       <div className="payment-layout">
         <div className="fieldset-card">
-          <h2>Card</h2>
+          <h2>{t('payment.card')}</h2>
           <label className="field-block">
-            <span>Card number</span>
+            <span>{t('payment.cardNumber')}</span>
             <input
               type="text"
               inputMode="numeric"
@@ -88,7 +90,7 @@ function PaymentPage() {
           </label>
           <div className="form-grid-2">
             <label className="field-block">
-              <span>Expiry</span>
+              <span>{t('payment.expiry')}</span>
               <input
                 type="text"
                 placeholder="MM/YY"
@@ -98,7 +100,7 @@ function PaymentPage() {
               />
             </label>
             <label className="field-block">
-              <span>CVC</span>
+              <span>{t('payment.cvc')}</span>
               <input
                 type="password"
                 autoComplete="cc-csc"
@@ -108,7 +110,7 @@ function PaymentPage() {
             </label>
           </div>
           <label className="field-block">
-            <span>Cardholder name</span>
+            <span>{t('payment.cardholder')}</span>
             <input
               type="text"
               autoComplete="cc-name"
@@ -119,25 +121,24 @@ function PaymentPage() {
         </div>
 
         <div className="fieldset-card">
-          <h2>Billing address</h2>
+          <h2>{t('payment.billing')}</h2>
           <label className="field-block">
-            <span>Country</span>
-            <select
-              value={draft.country}
-              onChange={(e) => setField('country', e.target.value)}
-            >
-              <option value="">Select country</option>
-              <option value="us">United States</option>
-              <option value="ru">Russia</option>
-              <option value="tr">Turkey</option>
+            <span>{t('payment.country')}</span>
+            <select value={draft.country} onChange={(e) => setField('country', e.target.value)}>
+              <option value="" disabled>
+                {t('payment.selectCountry')}
+              </option>
+              <option value="us">{t('payment.countryUs')}</option>
+              <option value="ru">{t('payment.countryRu')}</option>
+              <option value="tr">{t('payment.countryTr')}</option>
             </select>
           </label>
           <label className="field-block">
-            <span>City</span>
+            <span>{t('payment.city')}</span>
             <input type="text" value={draft.city} onChange={(e) => setField('city', e.target.value)} />
           </label>
           <label className="field-block">
-            <span>Address line</span>
+            <span>{t('payment.addressLine')}</span>
             <input
               type="text"
               autoComplete="street-address"
@@ -151,17 +152,17 @@ function PaymentPage() {
               checked={draft.terms}
               onChange={(e) => setField('terms', e.target.checked)}
             />
-            I agree to the terms and fare rules
+            {t('payment.agreeFare')}
           </label>
         </div>
       </div>
 
       <div className="detail-actions">
         <Link to="/booking/success" className="primary-button">
-          Pay now
+          {t('payment.payNow')}
         </Link>
         <Link to="/booking/passengers" className="text-button">
-          Back
+          {t('payment.back')}
         </Link>
       </div>
     </section>

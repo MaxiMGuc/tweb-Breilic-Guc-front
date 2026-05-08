@@ -1,5 +1,6 @@
-// Избранные маршруты: localStorage, сортировка, добавление/удаление (T45–T48 на клиенте).
+// Избранные маршруты: localStorage, сортировка, добавление/удаление.
 import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { addFavorite, getFavorites, removeFavorite, type FavoriteRoute } from '../utils/favorites.ts'
 
@@ -16,6 +17,7 @@ function sortRoutes(list: FavoriteRoute[], sort: SortKey): FavoriteRoute[] {
 }
 
 function FavoritesPage() {
+  const { t } = useTranslation()
   const [sort, setSort] = useState<SortKey>('recent')
   const [tick, setTick] = useState(0)
   const [from, setFrom] = useState('')
@@ -26,7 +28,7 @@ function FavoritesPage() {
     return sortRoutes(getFavorites(), sort)
   }, [sort, tick])
 
-  const refresh = useCallback(() => setTick((t) => t + 1), [])
+  const refresh = useCallback(() => setTick((n) => n + 1), [])
 
   const handleAdd = () => {
     addFavorite(from, to)
@@ -41,49 +43,49 @@ function FavoritesPage() {
   }
 
   return (
-    <section className="page-shell" aria-label="Favorites">
+    <section className="page-shell" aria-label={t('favorites.aria')}>
       <header className="page-header">
-        <h1 className="page-title">Favorite destinations</h1>
-        <p className="page-lead">Saved routes on this device (prototype).</p>
+        <h1 className="page-title">{t('favorites.title')}</h1>
+        <p className="page-lead">{t('favorites.lead')}</p>
       </header>
 
       <div className="favorites-toolbar">
         <div className="form-grid-2" style={{ flex: 1, maxWidth: 480 }}>
           <label className="field-block">
-            <span>From</span>
+            <span>{t('home.from')}</span>
             <input value={from} onChange={(e) => setFrom(e.target.value)} placeholder="Moscow" />
           </label>
           <label className="field-block">
-            <span>To</span>
+            <span>{t('home.to')}</span>
             <input value={to} onChange={(e) => setTo(e.target.value)} placeholder="Berlin" />
           </label>
         </div>
         <button type="button" className="primary-button" onClick={handleAdd}>
-          Add route
+          {t('favorites.addRoute')}
         </button>
         <label className="field-inline">
-          <span>Sort</span>
+          <span>{t('favorites.sort')}</span>
           <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)}>
-            <option value="recent">Recently added</option>
-            <option value="name">Name</option>
+            <option value="recent">{t('favorites.recent')}</option>
+            <option value="name">{t('favorites.name')}</option>
           </select>
         </label>
       </div>
 
       <ul className="favorites-grid">
-        {list.map((f) => (
-          <li key={f.id} className="favorite-card">
-            <p className="favorite-title">{f.title}</p>
-            <p className="page-muted">{f.subtitle}</p>
+        {list.map((fav) => (
+          <li key={fav.id} className="favorite-card">
+            <p className="favorite-title">{fav.title}</p>
+            <p className="page-muted">{fav.subtitle}</p>
             <div className="favorite-actions">
               <Link
-                to={`/search?from=${encodeURIComponent(f.from)}&to=${encodeURIComponent(f.to)}`}
+                to={`/search?from=${encodeURIComponent(fav.from)}&to=${encodeURIComponent(fav.to)}`}
                 className="text-button"
               >
-                Search flights
+                {t('favorites.searchFlights')}
               </Link>
-              <button type="button" className="ghost-button small" onClick={() => handleRemove(f.id)}>
-                Remove
+              <button type="button" className="ghost-button small" onClick={() => handleRemove(fav.id)}>
+                {t('favorites.remove')}
               </button>
             </div>
           </li>

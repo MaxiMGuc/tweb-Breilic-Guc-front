@@ -32,4 +32,3 @@ export const useMockAuth = () => {
 
   return { isAuthenticated, userName, login, logout }
 }
-
