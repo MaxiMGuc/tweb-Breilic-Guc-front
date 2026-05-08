@@ -1,10 +1,12 @@
 // Результаты поиска: фильтры, сохранение, шаринг, выбор оффера (T15–T18).
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { searchService } from '../api/index.ts'
 import { LS_SAVED_SEARCH } from '../constants/storageKeys.ts'
 import { useBooking } from '../context/BookingContext.tsx'
-import { MOCK_TICKETS, type MockTicket } from '../data/mockSearchResults.ts'
+import type { MockTicket } from '../data/mockSearchResults.ts'
 import { appendSearchHistory } from '../utils/searchHistory.ts'
+import { writeVersionedStorage } from '../utils/storage.ts'
 
 const INITIAL_MAX_PRICE = 800
 const INITIAL_STOPS = { any: true, nonstop: false, one: false }
@@ -21,6 +23,7 @@ function SearchResultsPage() {
   const [departureHint, setDepartureHint] = useState('')
   const [toolbarSort, setToolbarSort] = useState<'price' | 'duration' | 'departure'>('price')
   const [shareHint, setShareHint] = useState<string | null>(null)
+  const [tickets, setTickets] = useState<MockTicket[]>([])
 
   useEffect(() => {
     setSearchResultsReturnPath(`${location.pathname}${location.search}`)
@@ -31,6 +34,15 @@ function SearchResultsPage() {
 
   useEffect(() => {
     appendSearchHistory(fromQ, toQ)
+  }, [fromQ, toQ])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    searchService
+      .searchTickets({ from: fromQ, to: toQ }, controller.signal)
+      .then((data) => setTickets(data))
+      .catch(() => setTickets([]))
+    return () => controller.abort()
   }, [fromQ, toQ])
 
   const resetFilters = useCallback(() => {
@@ -50,11 +62,11 @@ function SearchResultsPage() {
       toolbarSort,
       savedAt: new Date().toISOString(),
     }
-    try {
-      localStorage.setItem(LS_SAVED_SEARCH, JSON.stringify(payload))
+    const saved = writeVersionedStorage(LS_SAVED_SEARCH, payload, { version: 1 })
+    if (saved) {
       setShareHint('Search saved on this device.')
       window.setTimeout(() => setShareHint(null), 2500)
-    } catch {
+    } else {
       setShareHint('Could not save (storage unavailable).')
       window.setTimeout(() => setShareHint(null), 2500)
     }
@@ -80,7 +92,7 @@ function SearchResultsPage() {
   }, [location.pathname, location.search])
 
   const filteredTickets = useMemo(() => {
-    let list = MOCK_TICKETS.filter((t) => t.price <= maxPrice)
+    let list = tickets.filter((t) => t.price <= maxPrice)
 
     if (!stops.any) {
       const want0 = stops.nonstop
@@ -105,7 +117,7 @@ function SearchResultsPage() {
     if (toolbarSort === 'departure') sorted.sort((a, b) => a.route.localeCompare(b.route))
 
     return sorted
-  }, [airlineFilter, departureHint, maxPrice, stops, toolbarSort])
+  }, [airlineFilter, departureHint, maxPrice, stops, tickets, toolbarSort])
 
   const selectTicket = (t: MockTicket) => {
     const currency = searchParams.get('cur') ?? 'USD'

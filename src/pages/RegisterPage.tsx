@@ -27,7 +27,8 @@ function RegisterPage() {
       return
     }
     setError(null)
-    login()
+    const email = String(fd.get('email') ?? '')
+    login({ email, role: 'user' })
     navigate('/profile', { replace: true })
   }
 

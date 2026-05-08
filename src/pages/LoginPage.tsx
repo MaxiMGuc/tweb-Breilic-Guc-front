@@ -16,7 +16,7 @@ function LoginPage() {
     const fd = new FormData(e.currentTarget)
     const email = String(fd.get('email') ?? '')
     const role = email.toLowerCase().includes('admin') ? 'admin' : 'user'
-    login(role)
+    login({ email, role })
     navigate(from, { replace: true })
   }
 

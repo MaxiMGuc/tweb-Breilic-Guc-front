@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { LS_SEARCH_PREFS } from '../constants/storageKeys.ts'
+import { readVersionedStorage, writeVersionedStorage } from '../utils/storage.ts'
 
 export type TripMode = 'round' | 'oneway' | 'multi'
 
@@ -9,16 +10,13 @@ type SearchPrefs = {
 }
 
 function loadPrefs(): SearchPrefs {
-  try {
-    const raw = localStorage.getItem(LS_SEARCH_PREFS)
-    if (!raw) return { currency: 'USD', sortBy: 'price' }
-    const p = JSON.parse(raw) as Partial<SearchPrefs>
-    return {
-      currency: typeof p.currency === 'string' ? p.currency : 'USD',
-      sortBy: typeof p.sortBy === 'string' ? p.sortBy : 'price',
-    }
-  } catch {
-    return { currency: 'USD', sortBy: 'price' }
+  const p = readVersionedStorage<Partial<SearchPrefs>>(LS_SEARCH_PREFS, {
+    expectedVersion: 1,
+    fallback: {},
+  })
+  return {
+    currency: typeof p.currency === 'string' ? p.currency : 'USD',
+    sortBy: typeof p.sortBy === 'string' ? p.sortBy : 'price',
   }
 }
 
@@ -38,11 +36,7 @@ export function useTripSearchForm() {
   const [sortBy, setSortBy] = useState(() => loadPrefs().sortBy)
 
   useEffect(() => {
-    try {
-      localStorage.setItem(LS_SEARCH_PREFS, JSON.stringify({ currency, sortBy }))
-    } catch {
-      /* ignore */
-    }
+    writeVersionedStorage(LS_SEARCH_PREFS, { currency, sortBy }, { version: 1 })
   }, [currency, sortBy])
 
   const swapEndpoints = useCallback(() => {

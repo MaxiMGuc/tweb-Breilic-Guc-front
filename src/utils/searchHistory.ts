@@ -1,4 +1,5 @@
 import { LS_SEARCH_HISTORY } from '../constants/storageKeys.ts'
+import { readStorageJson, writeStorageJson } from './storage.ts'
 
 export type SearchHistoryItem = {
   id: string
@@ -9,30 +10,20 @@ export type SearchHistoryItem = {
 }
 
 function load(): SearchHistoryItem[] {
-  try {
-    const raw = localStorage.getItem(LS_SEARCH_HISTORY)
-    if (!raw) return []
-    const p = JSON.parse(raw) as unknown
-    if (!Array.isArray(p)) return []
-    return p.filter(
-      (x): x is SearchHistoryItem =>
-        typeof x === 'object' &&
-        x !== null &&
-        typeof (x as SearchHistoryItem).id === 'string' &&
-        typeof (x as SearchHistoryItem).from === 'string' &&
-        typeof (x as SearchHistoryItem).to === 'string',
-    )
-  } catch {
-    return []
-  }
+  const p = readStorageJson<unknown>(LS_SEARCH_HISTORY, { fallback: [] })
+  if (!Array.isArray(p)) return []
+  return p.filter(
+    (x): x is SearchHistoryItem =>
+      typeof x === 'object' &&
+      x !== null &&
+      typeof (x as SearchHistoryItem).id === 'string' &&
+      typeof (x as SearchHistoryItem).from === 'string' &&
+      typeof (x as SearchHistoryItem).to === 'string',
+  )
 }
 
 function save(items: SearchHistoryItem[]) {
-  try {
-    localStorage.setItem(LS_SEARCH_HISTORY, JSON.stringify(items.slice(0, 20)))
-  } catch {
-    /* ignore */
-  }
+  writeStorageJson(LS_SEARCH_HISTORY, items.slice(0, 20))
 }
 
 /** Append a search to local history (client-only, Executor B / T44). */

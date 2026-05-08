@@ -1,16 +1,30 @@
 // Детали бронирования: мок по :id, check-in / manage (T32–T36 — превью UI).
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getMockTripById } from '../data/mockTrips.ts'
+import { tripsService } from '../api/index.ts'
+import type { MockTrip } from '../data/mockTrips.ts'
 
 function TripDetailPage() {
   const { id } = useParams()
-  const trip = getMockTripById(id)
+  const [trip, setTrip] = useState<MockTrip | null>(null)
 
   const [modal, setModal] = useState<'none' | 'dates' | 'cancel' | 'invoice'>('none')
   const [checkInOpen, setCheckInOpen] = useState(false)
 
   const closeModal = useCallback(() => setModal('none'), [])
+
+  useEffect(() => {
+    if (!id) {
+      setTrip(null)
+      return
+    }
+    const controller = new AbortController()
+    tripsService
+      .getTripById(id, controller.signal)
+      .then((data) => setTrip(data))
+      .catch(() => setTrip(null))
+    return () => controller.abort()
+  }, [id])
 
   if (!trip) {
     return (

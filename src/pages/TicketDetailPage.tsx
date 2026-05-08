@@ -1,20 +1,15 @@
 // Детали выбранного билета: багаж (mock), избранное в localStorage, контекст брони (T19–T21).
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { searchService } from '../api/index.ts'
+import { LS_FAVORITE_TICKET_IDS } from '../constants/storageKeys.ts'
 import { useBooking } from '../context/BookingContext.tsx'
-import { MOCK_TICKETS } from '../data/mockSearchResults.ts'
-
-const LS_FAVORITES = 'breilic_favorite_ticket_ids_v1'
+import type { MockTicket } from '../data/mockSearchResults.ts'
+import { readStorageJson, writeStorageJson } from '../utils/storage.ts'
 
 function readFavoriteIds(): string[] {
-  try {
-    const raw = localStorage.getItem(LS_FAVORITES)
-    if (!raw) return []
-    const p = JSON.parse(raw) as unknown
-    return Array.isArray(p) ? p.filter((x): x is string => typeof x === 'string') : []
-  } catch {
-    return []
-  }
+  const p = readStorageJson<unknown>(LS_FAVORITE_TICKET_IDS, { fallback: [] })
+  return Array.isArray(p) ? p.filter((x): x is string => typeof x === 'string') : []
 }
 
 function TicketDetailPage() {
@@ -24,22 +19,31 @@ function TicketDetailPage() {
     useBooking()
 
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => readFavoriteIds())
-
-  const mock = useMemo(
-    () => MOCK_TICKETS.find((t) => t.id === ticketId) ?? MOCK_TICKETS[0],
-    [ticketId],
-  )
+  const [ticket, setTicket] = useState<MockTicket | null>(null)
 
   useEffect(() => {
-    if (!ticketId) return
+    if (!ticketId) {
+      setTicket(null)
+      return
+    }
+    const controller = new AbortController()
+    searchService
+      .getTicketById(ticketId, controller.signal)
+      .then((data) => setTicket(data))
+      .catch(() => setTicket(null))
+    return () => controller.abort()
+  }, [ticketId])
+
+  useEffect(() => {
+    if (!ticketId || !ticket) return
     setSelectedOffer({
-      ticketId: mock.id,
-      routeLabel: mock.route,
-      priceFrom: mock.price,
+      ticketId: ticket.id,
+      routeLabel: ticket.route,
+      priceFrom: ticket.price,
       currency: 'USD',
-      airline: mock.airline,
+      airline: ticket.airline,
     })
-  }, [mock, setSelectedOffer, ticketId])
+  }, [setSelectedOffer, ticket, ticketId])
 
   const isFavorite = ticketId ? favoriteIds.includes(ticketId) : false
 
@@ -47,20 +51,27 @@ function TicketDetailPage() {
     if (!ticketId) return
     setFavoriteIds((prev) => {
       const next = prev.includes(ticketId) ? prev.filter((id) => id !== ticketId) : [...prev, ticketId]
-      try {
-        localStorage.setItem(LS_FAVORITES, JSON.stringify(next))
-      } catch {
-        /* ignore */
-      }
+      writeStorageJson(LS_FAVORITE_TICKET_IDS, next)
       return next
     })
   }, [ticketId])
 
-  const basePrice = selectedOffer?.priceFrom ?? mock.price
+  const basePrice = selectedOffer?.priceFrom ?? ticket?.price ?? 0
   const totalPreview = basePrice + baggageExtraUsd
 
   const continueBooking = () => {
     navigate('/booking')
+  }
+
+  if (!ticket) {
+    return (
+      <section className="page-shell" aria-label="Ticket details">
+        <p className="page-muted">Ticket not found.</p>
+        <Link to="/search/results" className="text-button">
+          Back to search results
+        </Link>
+      </section>
+    )
   }
 
   return (

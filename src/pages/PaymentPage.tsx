@@ -1,8 +1,8 @@
-// Оплата: черновик полей в sessionStorage чтобы «Back» не очищал форму (T27).
+// Оплата: в sessionStorage сохраняются только безопасные billing-поля (без данных карты).
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-
-const PAYMENT_DRAFT_KEY = 'breilic_payment_draft_v1'
+import { SS_PAYMENT_DRAFT } from '../constants/storageKeys.ts'
+import { readVersionedStorage, writeVersionedStorage } from '../utils/storage.ts'
 
 type PaymentDraft = {
   cardNumber: string
@@ -15,34 +15,23 @@ type PaymentDraft = {
   terms: boolean
 }
 
-const emptyDraft: PaymentDraft = {
-  cardNumber: '',
-  expiry: '',
-  cvc: '',
-  holder: '',
-  country: '',
-  city: '',
-  address: '',
-  terms: true,
-}
+type PersistedPaymentDraft = Pick<PaymentDraft, 'country' | 'city' | 'address' | 'terms'>
 
 function loadDraft(): PaymentDraft {
-  try {
-    const raw = sessionStorage.getItem(PAYMENT_DRAFT_KEY)
-    if (!raw) return emptyDraft
-    const p = JSON.parse(raw) as Partial<PaymentDraft>
-    return {
-      cardNumber: String(p.cardNumber ?? ''),
-      expiry: String(p.expiry ?? ''),
-      cvc: String(p.cvc ?? ''),
-      holder: String(p.holder ?? ''),
-      country: String(p.country ?? ''),
-      city: String(p.city ?? ''),
-      address: String(p.address ?? ''),
-      terms: p.terms !== false,
-    }
-  } catch {
-    return emptyDraft
+  const persisted = readVersionedStorage<Partial<PersistedPaymentDraft>>(SS_PAYMENT_DRAFT, {
+    area: 'session',
+    expectedVersion: 1,
+    fallback: {},
+  })
+  return {
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    holder: '',
+    country: String(persisted.country ?? ''),
+    city: String(persisted.city ?? ''),
+    address: String(persisted.address ?? ''),
+    terms: persisted.terms !== false,
   }
 }
 
@@ -50,11 +39,13 @@ function PaymentPage() {
   const [draft, setDraft] = useState<PaymentDraft>(() => loadDraft())
 
   useEffect(() => {
-    try {
-      sessionStorage.setItem(PAYMENT_DRAFT_KEY, JSON.stringify(draft))
-    } catch {
-      /* ignore */
+    const safeDraft: PersistedPaymentDraft = {
+      country: draft.country,
+      city: draft.city,
+      address: draft.address,
+      terms: draft.terms,
     }
+    writeVersionedStorage(SS_PAYMENT_DRAFT, safeDraft, { area: 'session', version: 1 })
   }, [draft])
 
   const setField = <K extends keyof PaymentDraft>(key: K, value: PaymentDraft[K]) => {

@@ -1,4 +1,5 @@
 import { LS_FAVORITES_ROUTES } from '../constants/storageKeys.ts'
+import { readStorageJson, writeStorageJson } from './storage.ts'
 
 export type FavoriteRoute = {
   id: string
@@ -10,22 +11,17 @@ export type FavoriteRoute = {
 }
 
 function load(): FavoriteRoute[] {
-  try {
-    const raw = localStorage.getItem(LS_FAVORITES_ROUTES)
-    if (raw === null) return defaultFavorites()
-    const p = JSON.parse(raw) as unknown
-    if (!Array.isArray(p)) return defaultFavorites()
-    if (p.length === 0) return []
-    return p.filter(
-      (x): x is FavoriteRoute =>
-        typeof x === 'object' &&
-        x !== null &&
-        typeof (x as FavoriteRoute).id === 'string' &&
-        typeof (x as FavoriteRoute).title === 'string',
-    )
-  } catch {
-    return defaultFavorites()
-  }
+  const p = readStorageJson<unknown>(LS_FAVORITES_ROUTES, { fallback: null })
+  if (p === null) return defaultFavorites()
+  if (!Array.isArray(p)) return defaultFavorites()
+  if (p.length === 0) return []
+  return p.filter(
+    (x): x is FavoriteRoute =>
+      typeof x === 'object' &&
+      x !== null &&
+      typeof (x as FavoriteRoute).id === 'string' &&
+      typeof (x as FavoriteRoute).title === 'string',
+  )
 }
 
 function defaultFavorites(): FavoriteRoute[] {
@@ -50,11 +46,7 @@ function defaultFavorites(): FavoriteRoute[] {
 }
 
 function save(items: FavoriteRoute[]) {
-  try {
-    localStorage.setItem(LS_FAVORITES_ROUTES, JSON.stringify(items))
-  } catch {
-    /* ignore */
-  }
+  writeStorageJson(LS_FAVORITES_ROUTES, items)
 }
 
 export function getFavorites(): FavoriteRoute[] {

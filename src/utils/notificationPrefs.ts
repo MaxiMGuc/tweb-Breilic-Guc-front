@@ -1,4 +1,5 @@
 import { LS_NOTIFICATIONS } from '../constants/storageKeys.ts'
+import { readStorageJson, writeStorageJson } from './storage.ts'
 
 export type NotificationPrefs = {
   priceAlerts: boolean
@@ -13,24 +14,14 @@ const DEFAULT: NotificationPrefs = {
 }
 
 export function loadNotificationPrefs(): NotificationPrefs {
-  try {
-    const raw = localStorage.getItem(LS_NOTIFICATIONS)
-    if (!raw) return { ...DEFAULT }
-    const p = JSON.parse(raw) as Partial<NotificationPrefs>
-    return {
-      priceAlerts: typeof p.priceAlerts === 'boolean' ? p.priceAlerts : DEFAULT.priceAlerts,
-      tripReminders: typeof p.tripReminders === 'boolean' ? p.tripReminders : DEFAULT.tripReminders,
-      promotions: typeof p.promotions === 'boolean' ? p.promotions : DEFAULT.promotions,
-    }
-  } catch {
-    return { ...DEFAULT }
+  const p = readStorageJson<Partial<NotificationPrefs>>(LS_NOTIFICATIONS, { fallback: {} })
+  return {
+    priceAlerts: typeof p.priceAlerts === 'boolean' ? p.priceAlerts : DEFAULT.priceAlerts,
+    tripReminders: typeof p.tripReminders === 'boolean' ? p.tripReminders : DEFAULT.tripReminders,
+    promotions: typeof p.promotions === 'boolean' ? p.promotions : DEFAULT.promotions,
   }
 }
 
 export function saveNotificationPrefs(data: NotificationPrefs) {
-  try {
-    localStorage.setItem(LS_NOTIFICATIONS, JSON.stringify(data))
-  } catch {
-    /* ignore */
-  }
+  writeStorageJson(LS_NOTIFICATIONS, data)
 }

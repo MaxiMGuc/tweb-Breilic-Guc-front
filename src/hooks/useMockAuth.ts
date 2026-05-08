@@ -3,11 +3,12 @@
  * Нужен для локальной разработки UI до подключения backend и базы данных.
  */
 import { useMemo, useState } from 'react'
+import { readStorageJson, removeStorageKey, writeStorageJson } from '../utils/storage.ts'
 
 const AUTH_STORAGE_KEY = 'mock_auth_user'
 
 const readInitialUser = (): string | null => {
-  const savedUser = window.localStorage.getItem(AUTH_STORAGE_KEY)
+  const savedUser = readStorageJson<string | null>(AUTH_STORAGE_KEY, { fallback: null })
   return savedUser && savedUser.trim().length > 0 ? savedUser : null
 }
 
@@ -20,12 +21,12 @@ export const useMockAuth = () => {
     const normalizedName = rawName.trim()
     const nextName = normalizedName.length > 0 ? normalizedName : 'Гость'
 
-    window.localStorage.setItem(AUTH_STORAGE_KEY, nextName)
+    writeStorageJson(AUTH_STORAGE_KEY, nextName)
     setUserName(nextName)
   }
 
   const logout = () => {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY)
+    removeStorageKey(AUTH_STORAGE_KEY)
     setUserName(null)
   }
 

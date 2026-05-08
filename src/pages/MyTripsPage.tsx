@@ -1,29 +1,23 @@
 // Список поездок: мок-данные, фильтр по статусу и поиск (T31).
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MOCK_TRIPS, type TripStatus } from '../data/mockTrips.ts'
+import { tripsService } from '../api/index.ts'
+import type { MockTrip, TripStatus } from '../data/mockTrips.ts'
 
 type StatusFilter = 'all' | TripStatus
 
 function MyTripsPage() {
   const [status, setStatus] = useState<StatusFilter>('all')
   const [query, setQuery] = useState('')
+  const [filtered, setFiltered] = useState<MockTrip[]>([])
 
-  const filtered = useMemo(() => {
-    let list = MOCK_TRIPS
-    if (status !== 'all') {
-      list = list.filter((t) => t.status === status)
-    }
-    const q = query.trim().toLowerCase()
-    if (q) {
-      list = list.filter(
-        (t) =>
-          t.routeLabel.toLowerCase().includes(q) ||
-          t.pnr.toLowerCase().includes(q) ||
-          t.cityHint.toLowerCase().includes(q),
-      )
-    }
-    return list
+  useEffect(() => {
+    const controller = new AbortController()
+    tripsService
+      .getTrips({ status, query }, controller.signal)
+      .then((rows) => setFiltered(rows))
+      .catch(() => setFiltered([]))
+    return () => controller.abort()
   }, [query, status])
 
   return (

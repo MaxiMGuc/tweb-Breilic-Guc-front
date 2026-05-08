@@ -1,21 +1,32 @@
 // Админ: пользователи — поиск, фильтр роли, превью «View» (T56, T57).
-import { useMemo, useState } from 'react'
-import { MOCK_ADMIN_USERS, type MockAdminUser } from '../data/mockAdmin.ts'
+import { useEffect, useMemo, useState } from 'react'
+import { adminService } from '../api/index.ts'
+import type { MockAdminUser } from '../data/mockAdmin.ts'
 
 function AdminUsersPage() {
   const [query, setQuery] = useState('')
   const [role, setRole] = useState<'all' | 'user' | 'admin'>('all')
   const [selected, setSelected] = useState<MockAdminUser | null>(null)
+  const [users, setUsers] = useState<MockAdminUser[]>([])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    adminService
+      .getUsers(controller.signal)
+      .then((rows) => setUsers(rows))
+      .catch(() => setUsers([]))
+    return () => controller.abort()
+  }, [])
 
   const rows = useMemo(() => {
-    let list = MOCK_ADMIN_USERS
+    let list = users
     if (role !== 'all') list = list.filter((u) => u.role === role)
     const q = query.trim().toLowerCase()
     if (q) {
       list = list.filter((u) => u.email.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
     }
     return list
-  }, [query, role])
+  }, [query, role, users])
 
   return (
     <section className="page-shell page-admin" aria-label="Admin users">

@@ -1,27 +1,23 @@
 // Админ: бронирования — поиск по ref/route, фильтр по датам, превью Open (T58, T59).
-import { useMemo, useState } from 'react'
-import { MOCK_ADMIN_BOOKINGS, type MockAdminBooking } from '../data/mockAdmin.ts'
+import { useEffect, useState } from 'react'
+import { adminService } from '../api/index.ts'
+import type { MockAdminBooking } from '../data/mockAdmin.ts'
 
 function AdminBookingsPage() {
   const [query, setQuery] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [selected, setSelected] = useState<MockAdminBooking | null>(null)
+  const [rows, setRows] = useState<MockAdminBooking[]>([])
 
-  const rows = useMemo(() => {
-    let list = MOCK_ADMIN_BOOKINGS
-    const q = query.trim().toLowerCase()
-    if (q) {
-      list = list.filter((b) => b.ref.toLowerCase().includes(q) || b.route.toLowerCase().includes(q))
-    }
-    if (dateFrom) {
-      list = list.filter((b) => b.created >= dateFrom)
-    }
-    if (dateTo) {
-      list = list.filter((b) => b.created <= dateTo)
-    }
-    return list
-  }, [query, dateFrom, dateTo])
+  useEffect(() => {
+    const controller = new AbortController()
+    adminService
+      .getBookings({ query, dateFrom, dateTo }, controller.signal)
+      .then((bookings) => setRows(bookings))
+      .catch(() => setRows([]))
+    return () => controller.abort()
+  }, [dateFrom, dateTo, query])
 
   return (
     <section className="page-shell page-admin" aria-label="Admin bookings">
