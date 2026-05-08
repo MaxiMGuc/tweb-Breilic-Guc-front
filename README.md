@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# Aviasales Frontend (React + TypeScript + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for an airline tickets product with search, booking flow, profile area, and admin pages.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19
+- TypeScript 5
+- Vite 8
+- React Router DOM 7
+- ESLint 9
 
-## React Compiler
+## Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Main source directory: `src/`
 
-## Expanding the ESLint configuration
+- `components/` - reusable UI blocks (layout, cards, forms, nav, etc.)
+- `pages/` - route-level pages (search, booking flow, profile, admin, help)
+- `context/` - global app state providers (auth and booking)
+- `data/` - local mock data for flights/users/bookings
+- `hooks/` - shared hooks
+- `utils/` - pure helper functions
+- `types/` - shared TypeScript models
+- `constants/` - app constants
+- `assets/` - static frontend assets
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Routing Map
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Router entrypoint is `src/main.tsx`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Route groups:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Public:
+  - `/` home
+  - `/search`, `/results`, `/trip/:id`, `/ticket/:id`
+  - `/help`, `/help/support`, `/help/faq`
+- Auth:
+  - `/auth/login`, `/auth/register`
+- User area:
+  - `/profile`, `/profile/account`, `/profile/history`, `/profile/settings`
+  - `/favorites`, `/my-trips`
+- Booking flow:
+  - `/booking`, `/booking/passengers`, `/booking/payment`, `/booking/success`
+- Admin:
+  - `/admin/flights`, `/admin/bookings`, `/admin/users`
+
+## State Management
+
+Global state is managed via React Context:
+
+- `AuthContext` - authentication status and auth actions
+- `BookingContext` - selected trip, passengers, and booking data
+
+Page-level state is kept local with React hooks.
+
+## Data and Storage Policy
+
+Current implementation relies on mock/local data (`src/data/*`) and browser storage.
+
+Recommended storage policy for future changes:
+
+- Keep only non-sensitive UI/session metadata in storage.
+- Do not persist full payment card data (`card number`, `CVC`, `expiry`).
+- Centralize read/write logic via one storage adapter (instead of direct calls in pages).
+
+## Development Commands
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other scripts:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run build` - type-check and production build
+- `npm run preview` - preview built app
+- `npm run lint` - run ESLint
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Engineering Conventions
+
+- Use TypeScript types/interfaces for all shared entities in `types/`.
+- Keep route pages thin; move reusable logic to hooks/utils/services.
+- Prefer pure helpers in `utils/` for formatting, filtering, and mapping.
+- Keep feature behavior deterministic and avoid implicit side effects in render paths.
+
+## Near-Term Architecture Goals
+
+1. Add role-aware route guards for private/admin routes.
+2. Introduce a typed API layer (`client + services`) to decouple UI from data source.
+3. Add route-level code splitting for better initial load performance.
+4. Add automated tests for critical user flows (search, booking, auth guards).

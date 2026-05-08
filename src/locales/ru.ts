@@ -59,6 +59,9 @@ const ru = {
     popularOffers: 'Популярные предложения',
     seeAll: 'Смотреть все',
     popularAria: 'Популярные предложения',
+    multiCityNotice:
+      'Несколько городов: сегменты появятся позже; пока используется первый перелёт.',
+    searchNeedEndpoints: 'Укажите город вылета и прилёта.',
   },
   validation: {
     emailRequired: 'Укажите email.',
@@ -83,6 +86,8 @@ const ru = {
     remember: 'Запомнить на этом устройстве',
     submit: 'Войти',
     forgot: 'Забыли пароль?',
+    forgotMockHint:
+      'Если аккаунт с таким email есть, мы отправили инструкцию (mock — запрос не отправлялся).',
   },
   register: {
     aria: 'Регистрация',
@@ -92,6 +97,9 @@ const ru = {
     confirmPassword: 'Подтвердите пароль',
     terms: 'Я принимаю условия использования и политику конфиденциальности',
     submit: 'Зарегистрироваться',
+    errPasswordShort: 'Пароль должен быть не короче 8 символов.',
+    errMismatch: 'Пароли не совпадают.',
+    errTerms: 'Примите условия, чтобы продолжить.',
   },
   bookingFlow: {
     stepsAria: 'Этапы бронирования',
@@ -112,6 +120,10 @@ const ru = {
     phonePlaceholder: '+7 …',
     continue: 'Далее',
     backToResults: 'К результатам поиска',
+    tripDatesPaxClass: '28 мар – 2 апр · 1 взрослый · эконом',
+    fareMock: 'Тариф (mock):',
+    fareExtras: '+ доп. ${{amount}}',
+    totalPreview: 'Итого к оплате (просмотр):',
   },
   passengers: {
     aria: 'Данные пассажиров',
@@ -174,6 +186,8 @@ const ru = {
     searchPlaceholder: 'Город или PNR…',
     open: 'Открыть',
     bookingRef: 'Бронь:',
+    noMatches: 'Нет поездок, подходящих под фильтры.',
+    searchTripsAria: 'Поиск поездок',
   },
   tripDetail: {
     aria: 'Детали поездки',
@@ -187,6 +201,25 @@ const ru = {
     changeDates: 'Изменить даты (просмотр)',
     cancelBooking: 'Отменить бронь (просмотр)',
     requestInvoice: 'Запросить счёт',
+    notFound: 'Бронь не найдена.',
+    backTrips: 'К моим поездкам',
+    bookingSummary: '{{route}} · {{airline}} · Бронь: {{pnr}}',
+    flightsMock: 'Сегменты туда и обратно (mock). Даты: {{range}}.',
+    checkInOpens: 'Регистрация (откроется у перевозчика)',
+    checkInDisabled: 'Регистрация (недоступно)',
+    checkInDisabledHint: 'Регистрация ещё недоступна',
+    modalCheckInTitle: 'Онлайн-регистрация',
+    modalCheckInLead: 'В проде откроется поток перевозчика. URL для просмотра:',
+    openCheckInTab: 'Открыть регистрацию (новая вкладка)',
+    close: 'Закрыть',
+    modalDatesTitle: 'Изменить даты',
+    modalDatesLead:
+      'Перебронирование вызывало бы API перевозчика с новыми датами. Здесь только UI-просмотр.',
+    modalCancelTitle: 'Отменить бронь',
+    modalCancelLead: 'Штрафы зависят от тарифа. Подтверждение ушло бы в backend.',
+    modalCancelClose: 'Закрыть просмотр',
+    modalInvoiceTitle: 'Запросить счёт',
+    modalInvoiceLead: 'Счёт/PDF формировался бы биллингом после подтверждения.',
   },
   profile: {
     aria: 'Профиль',
@@ -202,6 +235,7 @@ const ru = {
     langEn: 'English',
     langRu: 'Русский',
     save: 'Сохранить',
+    savedNotice: 'Изменения сохранены на этом устройстве.',
   },
   profileSettings: {
     aria: 'Настройки профиля',
@@ -217,6 +251,7 @@ const ru = {
     currentPassword: 'Текущий пароль',
     newPassword: 'Новый пароль',
     updatePassword: 'Обновить пароль',
+    passwordMockHint: 'Смена пароля ушла бы в API; ничего не отправлено (просмотр).',
   },
   profileHistory: {
     aria: 'История поиска',
@@ -225,6 +260,8 @@ const ru = {
     title: 'История поиска',
     lead: 'Недавно просмотренные маршруты (заглушка).',
     repeat: 'Повторить поиск',
+    refreshList: 'Обновить список',
+    empty: 'Истории пока нет — выполните поиск на главной или на странице поиска.',
   },
   ticketDetail: {
     aria: 'Детали билета',
@@ -243,6 +280,12 @@ const ru = {
     fareLead: 'Без возврата. Изменения за плату. Выбор места опционально.',
     continueBooking: 'К бронированию',
     addFavorites: 'В избранное',
+    removeFavorites: 'Убрать из избранного',
+    notFound: 'Билет не найден.',
+    backToResults: 'К результатам поиска',
+    fareSubtotal: 'Тариф (subtotal):',
+    baggageExtraShort: '+ багаж ${{amount}}',
+    estimatedTotal: 'Итого (mock):',
   },
   favorites: {
     aria: 'Избранное',
@@ -272,6 +315,7 @@ const ru = {
     search: 'Найти',
     placeholderFrom: 'Город или аэропорт',
     placeholderDates: 'Туда — обратно',
+    placeholderDeparture: 'Дата вылета',
     placeholderPassengers: '1 взрослый, эконом',
   },
   searchResults: {
@@ -299,6 +343,13 @@ const ru = {
     select: 'Выбрать',
     fromPrice: 'от $189',
     fromPrice2: 'от $156',
+    fromUsd: 'от ${{price}}',
+    airlineMultiHint: 'Ctrl/Cmd для выбора нескольких; пусто — все.',
+    noTickets: 'Нет билетов под выбранные фильтры.',
+    saveOk: 'Поиск сохранён на этом устройстве.',
+    saveFail: 'Не удалось сохранить (хранилище недоступно).',
+    shareCopied: 'Ссылка скопирована в буфер.',
+    shareTitle: 'Поиск авиабилетов',
   },
   helpPage: {
     aria: 'Справка для клиентов',
@@ -334,6 +385,15 @@ const ru = {
     a2: 'После успешной оплаты подтверждение отправляется на email (заглушка).',
     q3: 'Можно ли выбрать места?',
     a3: 'Схема салона и сборы зависят от перевозчика; опции появляются перед оплатой.',
+    q4: 'Какие способы оплаты поддерживаются?',
+    a4:
+      'Карты и локальные способы в оформлении — для демо; в проде был бы платёжный провайдер.',
+    q5: 'Как устроены нормы багажа?',
+    a5: 'У каждого тарифа свой включённый багаж; часто можно докупить места до вылета.',
+    searchQuestions: 'Поиск по вопросам',
+    searchPlaceholder: 'Введите текст…',
+    filterAria: 'Фильтр FAQ',
+    noMatch: 'Нет вопросов по вашему запросу.',
   },
   supportPage: {
     aria: 'Поддержка',
@@ -363,6 +423,8 @@ const ru = {
     colStatus: 'Статус',
     scheduled: 'По расписанию',
     edit: 'Изменить',
+    filterAria: 'Фильтр рейсов',
+    noMatches: 'Нет рейсов по запросу «{{query}}».',
   },
   adminUsers: {
     aria: 'Админ: пользователи',
@@ -377,6 +439,9 @@ const ru = {
     colRegistered: 'Регистрация',
     colRole: 'Роль',
     view: 'Открыть',
+    filterAria: 'Фильтр пользователей',
+    previewLine: 'Предпросмотр: {{email}} ({{role}}) — полный профиль из API.',
+    clearPreview: 'Закрыть',
   },
   adminBookings: {
     aria: 'Админ: бронирования',
@@ -391,6 +456,9 @@ const ru = {
     colStatus: 'Статус',
     paid: 'Оплачено',
     open: 'Открыть',
+    filterAria: 'Фильтр бронирований',
+    previewLine: 'Предпросмотр брони {{ref}} — детальный вид вызывал бы API.',
+    clearPreview: 'Закрыть',
   },
   account: {
     label: 'Вы вошли в аккаунт',

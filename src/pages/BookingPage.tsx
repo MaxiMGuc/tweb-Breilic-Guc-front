@@ -1,10 +1,16 @@
-// Обзор шага бронирования: сводка рейса и переход к данным пассажиров.
+// Обзор шага бронирования: сводка из контекста, возврат к результатам.
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import EmailField from '../components/form/EmailField'
+import { useBooking } from '../context/BookingContext.tsx'
 
 function BookingPage() {
   const { t } = useTranslation()
+  const { selectedOffer, baggageExtraUsd, searchResultsReturnPath } = useBooking()
+
+  const routeLabel = selectedOffer?.routeLabel ?? t('booking.sampleRoute')
+  const priceBase = selectedOffer?.priceFrom ?? 189
+  const total = priceBase + baggageExtraUsd
 
   return (
     <section className="page-shell" aria-label={t('booking.aria')}>
@@ -26,7 +32,21 @@ function BookingPage() {
 
       <div className="detail-card">
         <h2>{t('booking.selectedFlight')}</h2>
-        <p>{t('booking.sampleRoute')}</p>
+        <p>
+          {selectedOffer ? (
+            <>
+              {routeLabel} · {t('booking.tripDatesPaxClass')}
+              {selectedOffer.airline ? ` · ${selectedOffer.airline}` : ''}
+            </>
+          ) : (
+            routeLabel
+          )}
+        </p>
+        <p className="page-muted">
+          {t('booking.fareMock')} ${priceBase}
+          {baggageExtraUsd > 0 ? ` ${t('booking.fareExtras', { amount: baggageExtraUsd })}` : ''} ·{' '}
+          {t('booking.totalPreview')} ${total}
+        </p>
         <div className="form-row-inline">
           <EmailField
             label={t('booking.contactEmail')}
@@ -45,7 +65,7 @@ function BookingPage() {
           <Link to="/booking/passengers" className="primary-button">
             {t('booking.continue')}
           </Link>
-          <Link to="/search/results" className="text-button">
+          <Link to={searchResultsReturnPath} className="text-button">
             {t('booking.backToResults')}
           </Link>
         </div>

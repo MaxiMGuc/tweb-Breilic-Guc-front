@@ -33,4 +33,3 @@ export const AuthTabs = ({ currentPage, onNavigate }: AuthTabsProps) => {
     </div>
   )
 }
-

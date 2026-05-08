@@ -1,10 +1,70 @@
-// Верхняя панель навигации: ссылки по структуре проекта, выпадающие меню без бизнес-логики.
+// Верхняя панель навигации: один открытый выпадающий блок, mock-auth, i18n.
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.tsx'
 import LanguageSwitcher from './LanguageSwitcher'
+
+type MenuId = 'flights' | 'booking' | 'help' | 'account' | 'admin'
 
 function Navbar() {
   const { t } = useTranslation()
+  const { isAuthenticated, role, logout } = useAuth()
+  const [openMenu, setOpenMenu] = useState<MenuId | null>(null)
+  const navRef = useRef<HTMLElement>(null)
+  const baseId = useId()
+
+  const closeMenus = useCallback(() => setOpenMenu(null), [])
+
+  const toggleMenu = useCallback((id: MenuId) => {
+    setOpenMenu((prev) => (prev === id ? null : id))
+  }, [])
+
+  useEffect(() => {
+    const onDocMouseDown = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenMenu(null)
+      }
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenMenu(null)
+    }
+    document.addEventListener('mousedown', onDocMouseDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onDocMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [])
+
+  const dropdown = (id: MenuId, label: string, children: React.ReactNode) => {
+    const expanded = openMenu === id
+    const panelId = `${baseId}-${id}-panel`
+    return (
+      <div className="nav-dropdown">
+        <button
+          type="button"
+          className="nav-dropdown-trigger"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          id={`${baseId}-${id}-btn`}
+          onClick={() => toggleMenu(id)}
+        >
+          {label}
+        </button>
+        {expanded ? (
+          <div
+            id={panelId}
+            role="menu"
+            className="nav-dropdown-panel"
+            aria-labelledby={`${baseId}-${id}-btn`}
+          >
+            {children}
+          </div>
+        ) : null}
+      </div>
+    )
+  }
 
   return (
     <header className="topbar">
@@ -12,110 +72,199 @@ function Navbar() {
         {t('nav.brand')}
       </NavLink>
 
-      <nav className="topbar-menu" aria-label="Main services">
-        <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">{t('nav.flights')}</summary>
-          <div className="nav-dropdown-panel" role="menu">
-            <NavLink to="/search" className="nav-dropdown-link" role="menuitem">
+      <nav ref={navRef} className="topbar-menu" aria-label="Main services">
+        {dropdown(
+          'flights',
+          t('nav.flights'),
+          <>
+            <NavLink to="/search" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               {t('nav.searchTickets')}
             </NavLink>
-            <NavLink to="/search/results" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/search/results"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.searchResults')}
             </NavLink>
-          </div>
-        </details>
+          </>,
+        )}
 
-        <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">{t('nav.booking')}</summary>
-          <div className="nav-dropdown-panel" role="menu">
-            <NavLink to="/booking" className="nav-dropdown-link" role="menuitem">
+        {dropdown(
+          'booking',
+          t('nav.booking'),
+          <>
+            <NavLink to="/booking" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               {t('nav.overview')}
             </NavLink>
-            <NavLink to="/booking/passengers" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/booking/passengers"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.passengers')}
             </NavLink>
-            <NavLink to="/booking/payment" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/booking/payment"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.payment')}
             </NavLink>
-            <NavLink to="/booking/success" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/booking/success"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.success')}
             </NavLink>
-          </div>
-        </details>
+          </>,
+        )}
 
         <NavLink
           to="/my-trips"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
+          onClick={closeMenus}
         >
           {t('nav.myTrips')}
         </NavLink>
         <NavLink
           to="/favorites"
           className={({ isActive }) => `service-link ${isActive ? 'active' : ''}`}
+          onClick={closeMenus}
         >
           {t('nav.favorites')}
         </NavLink>
 
-        <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">{t('nav.help')}</summary>
-          <div className="nav-dropdown-panel" role="menu">
-            <NavLink to="/help" className="nav-dropdown-link" role="menuitem">
+        {dropdown(
+          'help',
+          t('nav.help'),
+          <>
+            <NavLink to="/help" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               {t('nav.helpCenter')}
             </NavLink>
-            <NavLink to="/help/faq" className="nav-dropdown-link" role="menuitem">
+            <NavLink to="/help/faq" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               {t('nav.faq')}
             </NavLink>
-            <NavLink to="/help/support" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/help/support"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.support')}
             </NavLink>
-          </div>
-        </details>
+          </>,
+        )}
 
-        <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">{t('nav.account')}</summary>
-          <div className="nav-dropdown-panel" role="menu">
-            <NavLink to="/profile" className="nav-dropdown-link" role="menuitem">
+        {dropdown(
+          'account',
+          t('nav.account'),
+          <>
+            <NavLink to="/account" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
+              {t('nav.account')}
+            </NavLink>
+            <NavLink to="/profile" className="nav-dropdown-link" role="menuitem" onClick={closeMenus}>
               {t('nav.profile')}
             </NavLink>
-            <NavLink to="/profile/settings" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/profile/settings"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.settings')}
             </NavLink>
-            <NavLink to="/profile/history" className="nav-dropdown-link" role="menuitem">
+            <NavLink
+              to="/profile/history"
+              className="nav-dropdown-link"
+              role="menuitem"
+              onClick={closeMenus}
+            >
               {t('nav.history')}
             </NavLink>
-            <NavLink to="/auth/login" className="nav-dropdown-link" role="menuitem">
-              {t('nav.logIn')}
-            </NavLink>
-            <NavLink to="/auth/register" className="nav-dropdown-link" role="menuitem">
-              {t('nav.register')}
-            </NavLink>
-          </div>
-        </details>
+            {!isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/auth/login"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  {t('nav.logIn')}
+                </NavLink>
+                <NavLink
+                  to="/auth/register"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  {t('nav.register')}
+                </NavLink>
+              </>
+            ) : null}
+          </>,
+        )}
 
-        <details className="nav-dropdown">
-          <summary className="nav-dropdown-trigger">{t('nav.admin')}</summary>
-          <div className="nav-dropdown-panel" role="menu">
-            <NavLink to="/admin/flights" className="nav-dropdown-link" role="menuitem">
-              {t('nav.adminFlights')}
-            </NavLink>
-            <NavLink to="/admin/users" className="nav-dropdown-link" role="menuitem">
-              {t('nav.adminUsers')}
-            </NavLink>
-            <NavLink to="/admin/bookings" className="nav-dropdown-link" role="menuitem">
-              {t('nav.adminBookings')}
-            </NavLink>
-          </div>
-        </details>
+        {isAuthenticated && role === 'admin'
+          ? dropdown(
+              'admin',
+              t('nav.admin'),
+              <>
+                <NavLink
+                  to="/admin/flights"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  {t('nav.adminFlights')}
+                </NavLink>
+                <NavLink
+                  to="/admin/users"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  {t('nav.adminUsers')}
+                </NavLink>
+                <NavLink
+                  to="/admin/bookings"
+                  className="nav-dropdown-link"
+                  role="menuitem"
+                  onClick={closeMenus}
+                >
+                  {t('nav.adminBookings')}
+                </NavLink>
+              </>,
+            )
+          : null}
       </nav>
 
       <div className="topbar-actions">
         <LanguageSwitcher />
-        <NavLink to="/auth/login" className="ghost-button">
-          {t('nav.logIn')}
-        </NavLink>
-        <NavLink to="/auth/register" className="primary-outline-button">
-          {t('nav.signUp')}
-        </NavLink>
+        {isAuthenticated ? (
+          <>
+            <NavLink to="/profile" className="ghost-button" onClick={closeMenus}>
+              {t('nav.profile')}
+            </NavLink>
+            <button type="button" className="primary-outline-button" onClick={() => logout()}>
+              {t('account.logout')}
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/auth/login" className="ghost-button" onClick={closeMenus}>
+              {t('nav.logIn')}
+            </NavLink>
+            <NavLink to="/auth/register" className="primary-outline-button" onClick={closeMenus}>
+              {t('nav.signUp')}
+            </NavLink>
+          </>
+        )}
       </div>
     </header>
   )

@@ -1,9 +1,18 @@
-// История поисков в профиле.
+// История поисков из localStorage; «Повторить поиск» с query (T44).
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { getSearchHistory } from '../utils/searchHistory.ts'
 
 function ProfileHistoryPage() {
   const { t } = useTranslation()
+  const [version, setVersion] = useState(0)
+  const items = useMemo(() => {
+    void version
+    return getSearchHistory()
+  }, [version])
+
+  const refresh = () => setVersion((v) => v + 1)
 
   return (
     <section className="page-shell" aria-label={t('profileHistory.aria')}>
@@ -18,19 +27,27 @@ function ProfileHistoryPage() {
         <p className="page-lead">{t('profileHistory.lead')}</p>
       </header>
 
+      <p className="page-muted">
+        <button type="button" className="text-button" onClick={refresh}>
+          {t('profileHistory.refreshList')}
+        </button>
+      </p>
+
       <ul className="history-list">
-        <li className="history-item">
-          <span>Moscow → Antalya · Apr 2025</span>
-          <Link to="/search" className="text-button">
-            {t('profileHistory.repeat')}
-          </Link>
-        </li>
-        <li className="history-item">
-          <span>Saint Petersburg → Dubai · Jun 2025</span>
-          <Link to="/search" className="text-button">
-            {t('profileHistory.repeat')}
-          </Link>
-        </li>
+        {items.length === 0 ? (
+          <li className="page-muted">{t('profileHistory.empty')}</li>
+        ) : null}
+        {items.map((h) => (
+          <li key={h.id} className="history-item">
+            <span>{h.label}</span>
+            <Link
+              to={`/search?from=${encodeURIComponent(h.from)}&to=${encodeURIComponent(h.to)}`}
+              className="text-button"
+            >
+              {t('profileHistory.repeat')}
+            </Link>
+          </li>
+        ))}
       </ul>
     </section>
   )

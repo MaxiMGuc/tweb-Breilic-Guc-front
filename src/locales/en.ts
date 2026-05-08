@@ -59,6 +59,9 @@ const en = {
     popularOffers: 'Popular offers',
     seeAll: 'See all',
     popularAria: 'Popular offers',
+    multiCityNotice:
+      'Multi-city: add segments in a future iteration; using first leg for preview.',
+    searchNeedEndpoints: 'Enter both departure and destination.',
   },
   validation: {
     emailRequired: 'Email is required.',
@@ -83,6 +86,8 @@ const en = {
     remember: 'Remember me on this device',
     submit: 'Log in',
     forgot: 'Forgot password?',
+    forgotMockHint:
+      'If an account exists for this email, we sent reset instructions (mock — no request sent).',
   },
   register: {
     aria: 'Register',
@@ -92,6 +97,9 @@ const en = {
     confirmPassword: 'Confirm password',
     terms: 'I agree to the terms of service and privacy policy',
     submit: 'Register',
+    errPasswordShort: 'Password must be at least 8 characters.',
+    errMismatch: 'Passwords do not match.',
+    errTerms: 'Please accept the terms to continue.',
   },
   bookingFlow: {
     stepsAria: 'Booking progress',
@@ -112,6 +120,10 @@ const en = {
     phonePlaceholder: '+1 …',
     continue: 'Continue',
     backToResults: 'Back to results',
+    tripDatesPaxClass: '28 Mar – 2 Apr · 1 adult · economy',
+    fareMock: 'Fare (mock):',
+    fareExtras: '+ extras ${{amount}}',
+    totalPreview: 'Total due (preview):',
   },
   passengers: {
     aria: 'Passenger details',
@@ -174,6 +186,8 @@ const en = {
     searchPlaceholder: 'Search by city or PNR…',
     open: 'Open',
     bookingRef: 'Booking ref:',
+    noMatches: 'No trips match your filters.',
+    searchTripsAria: 'Search trips',
   },
   tripDetail: {
     aria: 'Trip details',
@@ -187,6 +201,26 @@ const en = {
     changeDates: 'Change dates (preview)',
     cancelBooking: 'Cancel booking (preview)',
     requestInvoice: 'Request invoice',
+    notFound: 'Booking not found.',
+    backTrips: 'Back to my trips',
+    bookingSummary: '{{route}} · {{airline}} · Ref: {{pnr}}',
+    flightsMock: 'Outbound and return segments (mock). Dates: {{range}}.',
+    checkInOpens: 'Check-in (opens airline window)',
+    checkInDisabled: 'Check-in (not available)',
+    checkInDisabledHint: 'Check-in not yet available',
+    modalCheckInTitle: 'Online check-in',
+    modalCheckInLead: 'In production this would open the carrier check-in flow. Preview URL:',
+    openCheckInTab: 'Open check-in (new tab)',
+    close: 'Close',
+    modalDatesTitle: 'Change dates',
+    modalDatesLead:
+      'Rebooking would call the airline/API with new dates and fare difference. This is a UI preview only.',
+    modalCancelTitle: 'Cancel booking',
+    modalCancelLead:
+      'Cancellation fees depend on fare rules. Confirming would send a cancel request to the backend.',
+    modalCancelClose: 'Close preview',
+    modalInvoiceTitle: 'Request invoice',
+    modalInvoiceLead: 'Invoice/PDF would be generated or emailed by the billing service after confirmation.',
   },
   profile: {
     aria: 'Profile',
@@ -202,6 +236,7 @@ const en = {
     langEn: 'English',
     langRu: 'Русский',
     save: 'Save changes',
+    savedNotice: 'Changes saved on this device.',
   },
   profileSettings: {
     aria: 'Profile settings',
@@ -217,6 +252,7 @@ const en = {
     currentPassword: 'Current password',
     newPassword: 'New password',
     updatePassword: 'Update password',
+    passwordMockHint: 'Password update would call the API; nothing was sent (preview).',
   },
   profileHistory: {
     aria: 'Search history',
@@ -225,6 +261,8 @@ const en = {
     title: 'Search history',
     lead: 'Recently viewed routes (placeholder data).',
     repeat: 'Repeat search',
+    refreshList: 'Refresh list',
+    empty: 'No history yet — run a search from the home or search page.',
   },
   ticketDetail: {
     aria: 'Ticket details',
@@ -243,6 +281,12 @@ const en = {
     fareLead: 'Non-refundable. Changes for a fee. Seat selection optional.',
     continueBooking: 'Continue to booking',
     addFavorites: 'Add to favorites',
+    removeFavorites: 'Remove from favorites',
+    notFound: 'Ticket not found.',
+    backToResults: 'Back to search results',
+    fareSubtotal: 'Fare subtotal:',
+    baggageExtraShort: '+ baggage ${{amount}}',
+    estimatedTotal: 'Estimated total (mock):',
   },
   favorites: {
     aria: 'Favorites',
@@ -272,6 +316,7 @@ const en = {
     search: 'Search',
     placeholderFrom: 'City or airport',
     placeholderDates: 'Departure — return',
+    placeholderDeparture: 'Departure',
     placeholderPassengers: '1 adult, economy',
   },
   searchResults: {
@@ -299,6 +344,13 @@ const en = {
     select: 'Select',
     fromPrice: 'from $189',
     fromPrice2: 'from $156',
+    fromUsd: 'from ${{price}}',
+    airlineMultiHint: 'Hold Ctrl/Cmd to select airlines; empty = all.',
+    noTickets: 'No tickets match filters.',
+    saveOk: 'Search saved on this device.',
+    saveFail: 'Could not save (storage unavailable).',
+    shareCopied: 'Link copied to clipboard.',
+    shareTitle: 'Flight search',
   },
   helpPage: {
     aria: 'Help for customers',
@@ -334,6 +386,14 @@ const en = {
     a2: 'After successful payment, confirmation is sent by email (placeholder).',
     q3: 'Can I choose seats?',
     a3: 'Seat maps and fees vary by carrier; options appear before payment.',
+    q4: 'What payment methods are supported?',
+    a4: 'Cards and local methods shown at checkout are for demo; production would use a payment provider.',
+    q5: 'How do baggage allowances work?',
+    a5: 'Each fare tier lists included baggage; extra bags can often be added for a fee before departure.',
+    searchQuestions: 'Search questions',
+    searchPlaceholder: 'Type to filter…',
+    filterAria: 'Filter FAQ',
+    noMatch: 'No questions match your search.',
   },
   supportPage: {
     aria: 'Support',
@@ -363,6 +423,8 @@ const en = {
     colStatus: 'Status',
     scheduled: 'Scheduled',
     edit: 'Edit',
+    filterAria: 'Filter flights',
+    noMatches: 'No flights match "{{query}}".',
   },
   adminUsers: {
     aria: 'Admin users',
@@ -377,6 +439,9 @@ const en = {
     colRegistered: 'Registered',
     colRole: 'Role',
     view: 'View',
+    filterAria: 'Filter users',
+    previewLine: 'Preview: {{email}} ({{role}}) — full profile would load from API.',
+    clearPreview: 'Clear',
   },
   adminBookings: {
     aria: 'Admin bookings',
@@ -391,6 +456,9 @@ const en = {
     colStatus: 'Status',
     paid: 'Paid',
     open: 'Open',
+    filterAria: 'Filter bookings',
+    previewLine: 'Preview booking {{ref}} — detail view would call API.',
+    clearPreview: 'Clear',
   },
   account: {
     label: 'You are signed in',

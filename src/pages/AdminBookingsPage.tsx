@@ -1,8 +1,25 @@
-// Админ: бронирования.
+// Админ: бронирования — фильтры и превью Open.
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { adminService } from '../api/index.ts'
+import type { MockAdminBooking } from '../data/mockAdmin.ts'
 
 function AdminBookingsPage() {
   const { t } = useTranslation()
+  const [query, setQuery] = useState('')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [selected, setSelected] = useState<MockAdminBooking | null>(null)
+  const [rows, setRows] = useState<MockAdminBooking[]>([])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    adminService
+      .getBookings({ query, dateFrom, dateTo }, controller.signal)
+      .then((bookings) => setRows(bookings))
+      .catch(() => setRows([]))
+    return () => controller.abort()
+  }, [dateFrom, dateTo, query])
 
   return (
     <section className="page-shell page-admin" aria-label={t('adminBookings.aria')}>
@@ -12,16 +29,32 @@ function AdminBookingsPage() {
       </header>
 
       <div className="admin-toolbar">
-        <input type="search" className="search-input-wide" placeholder={t('adminBookings.searchPlaceholder')} />
+        <input
+          type="search"
+          className="search-input-wide"
+          placeholder={t('adminBookings.searchPlaceholder')}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label={t('adminBookings.filterAria')}
+        />
         <label className="field-inline">
           <span>{t('adminBookings.dateFrom')}</span>
-          <input type="date" />
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
         </label>
         <label className="field-inline">
           <span>{t('adminBookings.dateTo')}</span>
-          <input type="date" />
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </label>
       </div>
+
+      {selected ? (
+        <p className="page-muted">
+          {t('adminBookings.previewLine', { ref: selected.ref })}{' '}
+          <button type="button" className="text-button" onClick={() => setSelected(null)}>
+            {t('adminBookings.clearPreview')}
+          </button>
+        </p>
+      ) : null}
 
       <div className="table-wrap">
         <table className="data-table">
@@ -35,19 +68,25 @@ function AdminBookingsPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>ABC123</td>
-              <td>Moscow → Istanbul</td>
-              <td>2025-03-20</td>
-              <td>
-                <span className="badge success">{t('adminBookings.paid')}</span>
-              </td>
-              <td>
-                <button type="button" className="text-button">
-                  {t('adminBookings.open')}
-                </button>
-              </td>
-            </tr>
+            {rows.map((b) => (
+              <tr key={b.ref}>
+                <td>{b.ref}</td>
+                <td>{b.route}</td>
+                <td>{b.created}</td>
+                <td>
+                  <span
+                    className={`badge ${b.status === 'Paid' ? 'success' : b.status === 'Pending' ? '' : ''}`}
+                  >
+                    {b.status}
+                  </span>
+                </td>
+                <td>
+                  <button type="button" className="text-button" onClick={() => setSelected(b)}>
+                    {t('adminBookings.open')}
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
