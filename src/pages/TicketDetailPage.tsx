@@ -1,0 +1,135 @@
+// Детали выбранного билета: багаж (mock), избранное в localStorage, контекст брони (T19–T21).
+import { useCallback, useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { searchService } from '../api/index.ts'
+import { LS_FAVORITE_TICKET_IDS } from '../constants/storageKeys.ts'
+import { useBooking } from '../context/BookingContext.tsx'
+import type { MockTicket } from '../data/mockSearchResults.ts'
+import { readStorageJson, writeStorageJson } from '../utils/storage.ts'
+
+function readFavoriteIds(): string[] {
+  const p = readStorageJson<unknown>(LS_FAVORITE_TICKET_IDS, { fallback: [] })
+  return Array.isArray(p) ? p.filter((x): x is string => typeof x === 'string') : []
+}
+
+function TicketDetailPage() {
+  const { ticketId } = useParams()
+  const navigate = useNavigate()
+  const { selectedOffer, setSelectedOffer, baggageOption, setBaggageOption, baggageExtraUsd } =
+    useBooking()
+
+  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => readFavoriteIds())
+  const [ticket, setTicket] = useState<MockTicket | null>(null)
+
+  useEffect(() => {
+    if (!ticketId) {
+      return
+    }
+    const controller = new AbortController()
+    searchService
+      .getTicketById(ticketId, controller.signal)
+      .then((data) => setTicket(data))
+      .catch(() => setTicket(null))
+    return () => controller.abort()
+  }, [ticketId])
+
+  useEffect(() => {
+    if (!ticketId || !ticket) return
+    setSelectedOffer({
+      ticketId: ticket.id,
+      routeLabel: ticket.route,
+      priceFrom: ticket.price,
+      currency: 'USD',
+      airline: ticket.airline,
+    })
+  }, [setSelectedOffer, ticket, ticketId])
+
+  const isFavorite = ticketId ? favoriteIds.includes(ticketId) : false
+
+  const toggleFavorite = useCallback(() => {
+    if (!ticketId) return
+    setFavoriteIds((prev) => {
+      const next = prev.includes(ticketId) ? prev.filter((id) => id !== ticketId) : [...prev, ticketId]
+      writeStorageJson(LS_FAVORITE_TICKET_IDS, next)
+      return next
+    })
+  }, [ticketId])
+
+  const basePrice = selectedOffer?.priceFrom ?? ticket?.price ?? 0
+  const totalPreview = basePrice + baggageExtraUsd
+
+  const continueBooking = () => {
+    navigate('/booking')
+  }
+
+  if (!ticket) {
+    return (
+      <section className="page-shell" aria-label="Ticket details">
+        <p className="page-muted">Ticket not found.</p>
+        <Link to="/search/results" className="text-button">
+          Back to search results
+        </Link>
+      </section>
+    )
+  }
+
+  return (
+    <section className="page-shell" aria-label="Ticket details">
+      <nav className="breadcrumbs" aria-label="Breadcrumb">
+        <Link to="/search">Search</Link>
+        <span aria-hidden="true"> / </span>
+        <Link to="/search/results">Results</Link>
+        <span aria-hidden="true"> / </span>
+        <span>Ticket</span>
+      </nav>
+
+      <header className="page-header">
+        <h1 className="page-title">Flight details</h1>
+        <p className="page-muted">Ticket ID: {ticketId ?? '—'}</p>
+      </header>
+
+      <div className="detail-grid">
+        <div className="detail-card">
+          <h2>Itinerary</h2>
+          <ul className="detail-list">
+            <li>
+              <strong>Outbound</strong> — SVO 08:40 → IST 13:20
+            </li>
+            <li>
+              <strong>Return</strong> — IST 18:10 → SVO 21:35
+            </li>
+          </ul>
+          <label className="field-block">
+            <span>Baggage</span>
+            <select
+              value={baggageOption}
+              onChange={(e) => setBaggageOption(e.target.value as 'standard' | 'plus')}
+            >
+              <option value="standard">1×23 kg included</option>
+              <option value="plus">Extra bag (+$45)</option>
+            </select>
+          </label>
+          <p className="page-muted" style={{ marginTop: 8 }}>
+            Fare subtotal: ${basePrice}
+            {baggageOption === 'plus' ? ` + baggage $${baggageExtraUsd}` : ''} · Estimated total: $
+            {totalPreview} (mock)
+          </p>
+        </div>
+        <div className="detail-card">
+          <h2>Fare rules</h2>
+          <p className="page-muted">Non-refundable. Changes for a fee. Seat selection optional.</p>
+          <div className="detail-actions">
+            <button type="button" className="primary-button" onClick={continueBooking}>
+              Continue to booking
+            </button>
+            <button type="button" className={`secondary-button ${isFavorite ? 'active' : ''}`} onClick={toggleFavorite}>
+              {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default TicketDetailPage
