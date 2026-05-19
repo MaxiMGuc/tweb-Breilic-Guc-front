@@ -1,16 +1,9 @@
 // Настройки: уведомления в localStorage; смена пароля — превью (T42, T43).
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import PasswordField from '../components/form/PasswordField'
-import {
-  loadNotificationPrefs,
-  saveNotificationPrefs,
-  type NotificationPrefs,
-} from '../utils/notificationPrefs.ts'
+import { loadNotificationPrefs, saveNotificationPrefs, type NotificationPrefs } from '../utils/notificationPrefs.ts'
 
 function ProfileSettingsPage() {
-  const { t } = useTranslation()
   const [prefs, setPrefs] = useState<NotificationPrefs>(() => loadNotificationPrefs())
   const [pwdHint, setPwdHint] = useState<string | null>(null)
 
@@ -25,35 +18,35 @@ function ProfileSettingsPage() {
   }
 
   const handleUpdatePassword = () => {
-    setPwdHint(t('profileSettings.passwordMockHint'))
+    setPwdHint('Password update would call the API; nothing was sent (preview).')
     window.setTimeout(() => setPwdHint(null), 4000)
   }
 
   return (
-    <section className="page-shell" aria-label={t('profileSettings.aria')}>
+    <section className="page-shell" aria-label="Profile settings">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/profile">{t('profileSettings.breadcrumbProfile')}</Link>
+        <Link to="/profile">Profile</Link>
         <span aria-hidden="true"> / </span>
-        <span>{t('profileSettings.breadcrumbSettings')}</span>
+        <span>Settings</span>
       </nav>
 
       <header className="page-header">
-        <h1 className="page-title">{t('profileSettings.title')}</h1>
-        <p className="page-lead">{t('profileSettings.lead')}</p>
+        <h1 className="page-title">Settings</h1>
+        <p className="page-lead">Notifications, security, and connected accounts.</p>
       </header>
 
       {pwdHint ? <p className="page-muted">{pwdHint}</p> : null}
 
       <div className="stack-form">
         <fieldset className="fieldset-card">
-          <legend>{t('profileSettings.notifications')}</legend>
+          <legend>Notifications</legend>
           <label className="checkbox-row">
             <input
               type="checkbox"
               checked={prefs.priceAlerts}
               onChange={(e) => setPref({ priceAlerts: e.target.checked })}
             />
-            {t('profileSettings.priceAlerts')}
+            Price alerts for saved routes
           </label>
           <label className="checkbox-row">
             <input
@@ -61,7 +54,7 @@ function ProfileSettingsPage() {
               checked={prefs.tripReminders}
               onChange={(e) => setPref({ tripReminders: e.target.checked })}
             />
-            {t('profileSettings.tripReminders')}
+            Trip reminders by email
           </label>
           <label className="checkbox-row">
             <input
@@ -69,25 +62,22 @@ function ProfileSettingsPage() {
               checked={prefs.promotions}
               onChange={(e) => setPref({ promotions: e.target.checked })}
             />
-            {t('profileSettings.promotions')}
+            Promotions and newsletters
           </label>
         </fieldset>
 
         <fieldset className="fieldset-card">
-          <legend>{t('profileSettings.security')}</legend>
-          <PasswordField
-            label={t('profileSettings.currentPassword')}
-            name="currentPassword"
-            autoComplete="current-password"
-          />
-          <PasswordField
-            label={t('profileSettings.newPassword')}
-            name="newPassword"
-            autoComplete="new-password"
-            showStrengthHint
-          />
+          <legend>Security</legend>
+          <label className="field-block">
+            <span>Current password</span>
+            <input type="password" autoComplete="current-password" />
+          </label>
+          <label className="field-block">
+            <span>New password</span>
+            <input type="password" autoComplete="new-password" />
+          </label>
           <button type="button" className="secondary-button" onClick={handleUpdatePassword}>
-            {t('profileSettings.updatePassword')}
+            Update password
           </button>
         </fieldset>
       </div>

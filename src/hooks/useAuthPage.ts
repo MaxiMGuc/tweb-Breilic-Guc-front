@@ -43,3 +43,4 @@ export const useAuthPage = () => {
 
   return { currentPage, navigateTo }
 }
+

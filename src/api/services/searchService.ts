@@ -3,7 +3,7 @@ import type { SearchService, SearchTicketsQuery } from '../contracts.ts'
 import type { MockTicket } from '../../data/mockSearchResults.ts'
 import { MOCK_TICKETS } from '../../data/mockSearchResults.ts'
 
-const USE_MOCKS = true
+const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
 
 function applySearchFilters(items: MockTicket[], query: SearchTicketsQuery): MockTicket[] {
   let filtered = [...items]
@@ -38,6 +38,10 @@ export const searchService: SearchService = {
     if (USE_MOCKS) {
       return MOCK_TICKETS.find((ticket) => ticket.id === ticketId) ?? null
     }
-    return apiClient.request<MockTicket | null>(`/api/tickets/${ticketId}`, { signal })
+    try {
+      return await apiClient.request<MockTicket>(`/api/tickets/${ticketId}`, { signal })
+    } catch {
+      return null
+    }
   },
 }

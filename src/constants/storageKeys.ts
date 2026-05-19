@@ -11,5 +11,6 @@ export const LS_FAVORITES_ROUTES = 'breilic_favorites_routes_v1'
 export const LS_AUTH_SESSION = 'breilic_auth_session_v1'
 export const LS_AUTH_LEGACY = 'breilic_mock_auth'
 export const LS_AUTH_ROLE_LEGACY = 'breilic_mock_role'
+export const LS_AUTH_TOKEN = 'breilic_auth_token_v1'
 
 export const SS_PAYMENT_DRAFT = 'breilic_payment_draft_v1'

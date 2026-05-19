@@ -2,7 +2,7 @@ import { MOCK_TRIPS, getMockTripById, type MockTrip } from '../../data/mockTrips
 import { apiClient } from '../client.ts'
 import type { TripsQuery, TripsService } from '../contracts.ts'
 
-const USE_MOCKS = true
+const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
 
 function applyTripsFilters(items: MockTrip[], query?: TripsQuery): MockTrip[] {
   if (!query) {
@@ -37,6 +37,10 @@ export const tripsService: TripsService = {
     if (USE_MOCKS) {
       return getMockTripById(tripId) ?? null
     }
-    return apiClient.request<MockTrip | null>(`/api/trips/${tripId}`, { signal })
+    try {
+      return await apiClient.request<MockTrip>(`/api/trips/${tripId}`, { signal })
+    } catch {
+      return null
+    }
   },
 }

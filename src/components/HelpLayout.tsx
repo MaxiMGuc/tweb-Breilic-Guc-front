@@ -1,32 +1,19 @@
 // Общая оболочка раздела помощи: боковое меню и вложенные страницы.
-import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router-dom'
 
 function HelpLayout() {
-  const { t } = useTranslation()
-
   return (
     <div className="help-layout">
-      <aside className="help-sidebar" aria-label={t('helpLayout.sidebarAria')}>
+      <aside className="help-sidebar" aria-label="Help section navigation">
         <nav className="help-sidebar-nav">
-          <NavLink
-            to="/help"
-            end
-            className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}
-          >
-            {t('nav.helpCenter')}
+          <NavLink to="/help" end className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}>
+            Help center
           </NavLink>
-          <NavLink
-            to="/help/faq"
-            className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}
-          >
-            {t('nav.faq')}
+          <NavLink to="/help/faq" className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}>
+            FAQ
           </NavLink>
-          <NavLink
-            to="/help/support"
-            className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}
-          >
-            {t('nav.support')}
+          <NavLink to="/help/support" className={({ isActive }) => `help-sidebar-link ${isActive ? 'active' : ''}`}>
+            Support
           </NavLink>
         </nav>
       </aside>

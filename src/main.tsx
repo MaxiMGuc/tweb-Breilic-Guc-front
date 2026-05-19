@@ -1,5 +1,4 @@
 // Точка входа приложения: инициализирует React, роутер и карту маршрутов.
-import './i18n'
 import { Suspense, lazy, StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -12,6 +11,7 @@ import { RequireAuth } from './components/RequireAuth.tsx'
 
 const AccountPage = lazy(() => import('./pages/AccountPage.tsx'))
 const AuthLayout = lazy(() => import('./pages/AuthLayout.tsx'))
+const AdminLayout = lazy(() => import('./components/AdminLayout.tsx'))
 const AdminBookingsPage = lazy(() => import('./pages/AdminBookingsPage.tsx'))
 const AdminFlightsPage = lazy(() => import('./pages/AdminFlightsPage.tsx'))
 const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage.tsx'))
@@ -154,29 +154,18 @@ createRoot(document.getElementById('root')!).render(
                   <Route path="support" element={<SupportPage />} />
                 </Route>
                 <Route
-                  path="admin/flights"
+                  path="admin"
                   element={
-                    <RequireAuth allowedRoles={['admin']}>
-                      <AdminFlightsPage />
+                    <RequireAuth allowedRoles={['admin', 'manager']}>
+                      <AdminLayout />
                     </RequireAuth>
                   }
-                />
-                <Route
-                  path="admin/users"
-                  element={
-                    <RequireAuth allowedRoles={['admin']}>
-                      <AdminUsersPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="admin/bookings"
-                  element={
-                    <RequireAuth allowedRoles={['admin']}>
-                      <AdminBookingsPage />
-                    </RequireAuth>
-                  }
-                />
+                >
+                  <Route index element={<Navigate to="flights" replace />} />
+                  <Route path="flights" element={<AdminFlightsPage />} />
+                  <Route path="users" element={<AdminUsersPage />} />
+                  <Route path="bookings" element={<AdminBookingsPage />} />
+                </Route>
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>

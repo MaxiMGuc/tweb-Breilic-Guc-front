@@ -1,40 +1,36 @@
 // Обращение в поддержку.
-import { useTranslation } from 'react-i18next'
-
 function SupportPage() {
-  const { t } = useTranslation()
-
   return (
-    <section className="help-inner" aria-label={t('supportPage.aria')}>
+    <section className="help-inner" aria-label="Support">
       <header className="page-header">
-        <h1 className="page-title">{t('supportPage.title')}</h1>
-        <p className="page-lead">{t('supportPage.lead')}</p>
+        <h1 className="page-title">Support</h1>
+        <p className="page-lead">Send a message to our team. Response times are indicative only.</p>
       </header>
 
       <form className="stack-form support-form">
         <label className="field-block">
-          <span>{t('supportPage.topic')}</span>
+          <span>Topic</span>
           <select defaultValue="booking">
-            <option value="booking">{t('supportPage.topicBooking')}</option>
-            <option value="payment">{t('supportPage.topicPayment')}</option>
-            <option value="refund">{t('supportPage.topicRefund')}</option>
-            <option value="other">{t('supportPage.topicOther')}</option>
+            <option value="booking">Booking issue</option>
+            <option value="payment">Payment</option>
+            <option value="refund">Refund</option>
+            <option value="other">Other</option>
           </select>
         </label>
         <label className="field-block">
-          <span>{t('supportPage.bookingRef')}</span>
-          <input type="text" placeholder={t('supportPage.bookingRefPlaceholder')} />
+          <span>Booking reference (optional)</span>
+          <input type="text" placeholder="e.g. ABC123" />
         </label>
         <label className="field-block">
-          <span>{t('supportPage.message')}</span>
-          <textarea rows={5} placeholder={t('supportPage.messagePlaceholder')} />
+          <span>Message</span>
+          <textarea rows={5} placeholder="Describe your question…" />
         </label>
         <label className="field-block">
-          <span>{t('supportPage.attachment')}</span>
+          <span>Attachment (optional)</span>
           <input type="file" />
         </label>
         <button type="button" className="primary-button">
-          {t('supportPage.submit')}
+          Submit request
         </button>
       </form>
     </section>

@@ -15,6 +15,19 @@ export type ApiClientConfig = {
   defaultTimeoutMs?: number
 }
 
+let currentToken: string | null = null
+
+export function setAuthToken(token: string | null): void {
+  currentToken = token
+}
+
+export function getAuthToken(): string | null {
+  return currentToken
+}
+
+// Cобытие, на которое подписывается AuthContext чтобы делать logout при 401.
+export const AUTH_EXPIRED_EVENT = 'auth:expired'
+
 export class ApiClient {
   private readonly baseUrl: string
   private readonly defaultTimeoutMs: number
@@ -43,16 +56,31 @@ export class ApiClient {
       }
     }
 
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    }
+    if (currentToken && !headers.Authorization) {
+      headers.Authorization = `Bearer ${currentToken}`
+    }
+
     try {
       const res = await fetch(`${this.baseUrl}${path}`, {
         method,
         signal,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
         body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
       })
+
+      if (res.status === 401) {
+        currentToken = null
+        try {
+          window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT))
+        } catch {
+          /* SSR / тесты без window */
+        }
+        throw new ApiError('Unauthorized', 'HTTP', { status: 401 })
+      }
 
       if (!res.ok) {
         const text = await res.text().catch(() => '')
@@ -66,7 +94,8 @@ export class ApiClient {
         return undefined as TResponse
       }
 
-      return (await res.json()) as TResponse
+      const text = await res.text()
+      return text ? (JSON.parse(text) as TResponse) : (undefined as TResponse)
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw new ApiError('Request timed out or was aborted', 'TIMEOUT')
@@ -84,4 +113,6 @@ export class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient()
+export const apiClient = new ApiClient({
+  baseUrl: import.meta.env.VITE_API_BASE_URL ?? '',
+})

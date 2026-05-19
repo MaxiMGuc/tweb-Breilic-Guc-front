@@ -1,15 +1,14 @@
 // Верхний промо-блок главной страницы: объясняет ценность сервиса и задает контекст поиска.
 // Переиспользуется в составе HomePage.
-import { useTranslation } from 'react-i18next'
-
 function HeroSection() {
-  const { t } = useTranslation()
-
   return (
     <section className="hero">
-      <p className="hero-caption">{t('home.heroCaption')}</p>
-      <h1>{t('home.heroTitle')}</h1>
-      <p>{t('home.heroLead')}</p>
+      <p className="hero-caption">One search - many airlines and agencies</p>
+      <h1>Cheap flights for your next trip</h1>
+      <p>
+        Compare prices, choose convenient routes, and find tickets that fit your travel plans in
+        seconds.
+      </p>
     </section>
   )
 }

@@ -1,29 +1,37 @@
 // Успешное бронирование: номер заказа и дальнейшие действия.
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 function BookingSuccessPage() {
-  const { t } = useTranslation()
+  const location = useLocation()
+  const state = location.state as { ref?: string; demoPayment?: boolean } | null
+  const ref = state?.ref ?? 'ABC123XYZ'
+  const demo = state?.demoPayment === true
 
   return (
-    <section className="page-shell page-success" aria-label={t('bookingSuccess.aria')}>
+    <section className="page-shell page-success" aria-label="Booking confirmed">
       <div className="success-banner">
-        <h1 className="page-title">{t('bookingSuccess.title')}</h1>
+        <h1 className="page-title">Booking confirmed</h1>
         <p className="page-lead">
-          {t('bookingSuccess.lead')} <strong>ABC123XYZ</strong>
+          Your reservation reference: <strong>{ref}</strong>
         </p>
-        <p className="page-muted">{t('bookingSuccess.muted')}</p>
+        {demo ? (
+          <p className="page-muted">
+            Учебный проект: оплата была симуляцией, реальные средства не списывались.
+          </p>
+        ) : (
+          <p className="page-muted">A confirmation has been sent to your email (placeholder).</p>
+        )}
       </div>
 
       <div className="detail-actions">
         <Link to="/my-trips" className="primary-button">
-          {t('bookingSuccess.viewTrips')}
+          View my trips
         </Link>
         <Link to="/" className="secondary-button">
-          {t('bookingSuccess.backHome')}
+          Back to home
         </Link>
         <button type="button" className="ghost-button">
-          {t('bookingSuccess.downloadReceipt')}
+          Download receipt (preview)
         </button>
       </div>
     </section>

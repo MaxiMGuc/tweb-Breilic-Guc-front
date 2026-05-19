@@ -150,15 +150,6 @@ button.nav-dropdown-trigger {
   font-size: 14px;
 }
 
-button.nav-dropdown-link {
-  width: 100%;
-  text-align: left;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
-}
-
 .nav-dropdown-link:hover {
   background: #f0f6ff;
 }
@@ -260,13 +251,18 @@ button.nav-dropdown-link {
 
 .search-field input {
   border: none;
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   padding: 0;
   width: 100%;
   min-width: 0;
   font-size: 15px;
   color: #1d2f4a;
   background: transparent;
+}
+
+.search-field input:focus-visible {
+  outline-color: #0f6cff;
 }
 
 .swap-button {
@@ -417,106 +413,6 @@ button.nav-dropdown-link {
   color: #d1293d;
   font-size: 13px;
   line-height: 1.2;
-}
-
-.field-block input[aria-invalid='true'],
-.field-inline input[aria-invalid='true'],
-.auth-form input[aria-invalid='true'] {
-  border-color: #e0858f;
-}
-
-.field-block input[aria-invalid='true']:focus,
-.field-inline input[aria-invalid='true']:focus,
-.auth-form input[aria-invalid='true']:focus {
-  outline: 2px solid #f5b8c0;
-  border-color: #d1293d;
-}
-
-.password-hint {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #5f738e;
-  line-height: 1.45;
-}
-
-.password-hint-title {
-  margin: 0 0 4px;
-  font-weight: 600;
-  color: #4b607d;
-  font-size: 13px;
-}
-
-.password-hint ul {
-  margin: 0;
-  padding-left: 1.15em;
-}
-
-.password-input-wrap {
-  display: flex;
-  align-items: stretch;
-  border: 1px solid #d6e2f7;
-  border-radius: 10px;
-  min-height: 42px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.auth-form .password-input-wrap {
-  border-color: #cfd9ea;
-}
-
-.password-input-wrap:focus-within {
-  outline: 2px solid #b3d1ff;
-  border-color: #0f6cff;
-}
-
-.password-input-wrap input[type='password'],
-.password-input-wrap input[type='text'] {
-  flex: 1;
-  min-width: 0;
-  border: none !important;
-  border-radius: 0 !important;
-  outline: none;
-  font-family: inherit;
-  font-size: 15px;
-  color: #1e2a3a;
-  box-sizing: border-box;
-  background: transparent;
-}
-
-.field-block .password-input-wrap input[type='password'],
-.field-block .password-input-wrap input[type='text'] {
-  padding: 10px 12px;
-}
-
-.auth-form .password-input-wrap input[type='password'],
-.auth-form .password-input-wrap input[type='text'] {
-  min-height: 42px;
-  padding: 0 12px;
-}
-
-.password-toggle {
-  flex-shrink: 0;
-  border: none;
-  border-left: 1px solid #e2eaf5;
-  background: #f0f4fa;
-  padding: 0 14px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4d627d;
-  font-family: inherit;
-}
-
-.password-toggle:hover {
-  background: #e4ecfa;
-  color: #1e2a3a;
-}
-
-.password-toggle:focus-visible {
-  outline: 2px solid #0f6cff;
-  outline-offset: -2px;
-  z-index: 1;
 }
 
 .ticket-card {
@@ -764,6 +660,17 @@ button.nav-dropdown-link {
   border: none;
   cursor: pointer;
   padding: 0;
+}
+
+/* Consistent keyboard focus visibility for interactive controls */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role='menuitem']:focus-visible {
+  outline: 2px solid #0f6cff;
+  outline-offset: 2px;
 }
 
 .results-layout {
@@ -1123,6 +1030,50 @@ button.nav-dropdown-link {
   gap: 10px;
   align-items: flex-end;
   margin-bottom: 14px;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.admin-tab {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #d6e2f7;
+  background: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #3d4f6f;
+  text-decoration: none;
+}
+
+.admin-tab:hover {
+  border-color: #90caf9;
+  color: #1565c0;
+}
+
+.admin-tab.active {
+  background: #e3f2fd;
+  border-color: #64b5f6;
+  color: #0d47a1;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.admin-editor {
+  border: 1px solid #e6edf8;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fbfdff;
 }
 
 .search-input-wide {

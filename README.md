@@ -2,6 +2,51 @@
 
 Frontend application for an airline tickets product with search, booking flow, profile area, and admin pages.
 
+## Backend integration (test-variant)
+
+This copy is wired to the backend in `../tweb-Breilic-Guc-backend`.
+
+### How to run both sides
+
+1. Start the backend first:
+   ```bash
+   cd ../tweb-Breilic-Guc-backend/eAviaSales.Api
+   dotnet run --launch-profile http
+   ```
+   The API will listen on `http://localhost:5099`. Swagger UI: `http://localhost:5099/swagger`.
+
+2. In a second terminal, start the frontend:
+   ```bash
+   npm install
+   npm run dev
+   ```
+   App opens at `http://localhost:5173`.
+
+### Environment
+
+`.env.development` controls the API base URL and mock toggle:
+```
+VITE_API_BASE_URL=http://localhost:5099
+VITE_USE_MOCKS=false
+```
+- Set `VITE_USE_MOCKS=true` to fall back to local mock data (no backend needed).
+- After editing `.env.*`, restart `npm run dev`.
+
+### Smoke test scenario
+
+1. Open `/auth/register`, fill the form, submit → backend `POST /api/reg` should return 201.
+2. The app auto-logins and redirects to `/profile`.
+3. In DevTools → Application → Local Storage you'll see `breilic_auth_session_v1` with a `token` field.
+4. Every protected request now carries `Authorization: Bearer <token>` (check Network tab).
+5. To test admin pages, manually elevate the user in the DB:
+   ```sql
+   UPDATE Users SET Role = 'Admin' WHERE Email = 'your@email';
+   ```
+   Re-login to receive a new token, then `/admin/users` and `/admin/bookings` will work.
+6. To test booking flow end-to-end, first create a product (flight) via Swagger as admin, then go through `Search → Ticket → Booking → Passengers → Payment → Pay now`. The order will be created on the backend and the success page will show its real reference (`ORD-<id>`).
+
+
+
 ## Tech Stack
 
 - React 19

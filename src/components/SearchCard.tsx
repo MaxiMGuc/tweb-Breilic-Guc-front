@@ -1,11 +1,9 @@
-// Форма поиска на главной: режимы, swap и чекбоксы в связке с /search/results.
+// Форма поиска на главной: те же режимы/swap/чекбоксы, что на /search (исполнитель B: T05–T07, T09).
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
 import { useTripSearchForm } from '../hooks/useTripSearchForm.ts'
 
 function SearchCard() {
-  const { t } = useTranslation()
   const {
     tripMode,
     setTripMode,
@@ -27,15 +25,15 @@ function SearchCard() {
   const resultsPath = buildResultsPath({ includePageOptions: false, includeHotel: true })
 
   return (
-    <section className="search-card" aria-label={t('home.searchAria')}>
-      <div className="trip-mode-tabs" role="tablist" aria-label={t('home.tripModeAria')}>
+    <section className="search-card" aria-label="Flight search">
+      <div className="trip-mode-tabs" role="tablist" aria-label="Trip mode">
         <NavLink
           to="/"
           end
           className={({ isActive }) => `trip-mode-tab ${isActive ? 'active' : ''}`}
           onClick={() => setTripMode('round')}
         >
-          {t('home.roundTrip')}
+          Round trip
         </NavLink>
         <button
           type="button"
@@ -44,7 +42,7 @@ function SearchCard() {
           className={`trip-mode-tab ${tripMode === 'oneway' ? 'active' : ''}`}
           onClick={() => setTripMode('oneway')}
         >
-          {t('home.oneWay')}
+          One way
         </button>
         <button
           type="button"
@@ -53,29 +51,24 @@ function SearchCard() {
           className={`trip-mode-tab ${tripMode === 'multi' ? 'active' : ''}`}
           onClick={() => setTripMode('multi')}
         >
-          {t('home.multiCity')}
+          Multi-city
         </button>
       </div>
 
       <div className="search-row">
         <label className="search-field">
-          <span>{t('home.from')}</span>
+          <span>From</span>
           <input type="text" placeholder="Moscow" value={from} onChange={(e) => setFrom(e.target.value)} />
         </label>
-        <button
-          type="button"
-          className="swap-button"
-          aria-label={t('home.swapAria')}
-          onClick={swapEndpoints}
-        >
+        <button type="button" className="swap-button" aria-label="Swap departure and destination" onClick={swapEndpoints}>
           ↔
         </button>
         <label className="search-field">
-          <span>{t('home.to')}</span>
+          <span>To</span>
           <input type="text" placeholder="Istanbul" value={to} onChange={(e) => setTo(e.target.value)} />
         </label>
         <label className="search-field">
-          <span>{t('home.dates')}</span>
+          <span>Dates</span>
           <input
             type="text"
             placeholder={tripMode === 'oneway' ? 'Departure' : '28 Mar - 2 Apr'}
@@ -85,11 +78,11 @@ function SearchCard() {
         </label>
         {tripMode === 'multi' ? (
           <p className="page-muted" style={{ gridColumn: '1 / -1', margin: 0 }}>
-            {t('home.multiCityNotice')}
+            Multi-city: add segments in a future iteration; using first leg for preview.
           </p>
         ) : null}
         <label className="search-field">
-          <span>{t('home.passengers')}</span>
+          <span>Passengers</span>
           <input type="text" placeholder="1 passenger, economy" readOnly />
         </label>
         <NavLink
@@ -98,14 +91,14 @@ function SearchCard() {
           onClick={(e) => {
             if (!from.trim() || !to.trim()) {
               e.preventDefault()
-              setSearchError(t('home.searchNeedEndpoints'))
+              setSearchError('Enter both departure and destination.')
               window.setTimeout(() => setSearchError(null), 4000)
             } else {
               setSearchError(null)
             }
           }}
         >
-          {t('home.searchTickets')}
+          Search tickets
         </NavLink>
       </div>
 
@@ -114,15 +107,11 @@ function SearchCard() {
       <div className="search-options">
         <label>
           <input type="checkbox" checked={hotelDeals} onChange={(e) => setHotelDeals(e.target.checked)} />
-          {t('home.openHotelDeals')}
+          Open-hotel deals
         </label>
         <label>
-          <input
-            type="checkbox"
-            checked={nearbyAirports}
-            onChange={(e) => setNearbyAirports(e.target.checked)}
-          />
-          {t('home.nearbyAirports')}
+          <input type="checkbox" checked={nearbyAirports} onChange={(e) => setNearbyAirports(e.target.checked)} />
+          Include nearby airports
         </label>
       </div>
     </section>

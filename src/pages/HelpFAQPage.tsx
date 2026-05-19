@@ -1,48 +1,60 @@
-// FAQ: раскрывающиеся ответы и поиск по тексту.
+// FAQ: раскрывающиеся ответы и поиск по тексту (T49–T51).
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
-const FAQ_INDEX = [1, 2, 3, 4, 5] as const
+type FaqItem = { q: string; a: string }
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    q: 'How do I change or cancel a ticket?',
+    a: 'Fare rules depend on the airline. Use “Manage booking” in My trips when available.',
+  },
+  {
+    q: 'When will I receive my e-ticket?',
+    a: 'After successful payment, confirmation is sent by email (placeholder).',
+  },
+  {
+    q: 'Can I choose seats?',
+    a: 'Seat maps and fees vary by carrier; options appear before payment.',
+  },
+  {
+    q: 'What payment methods are supported?',
+    a: 'Cards and local methods shown at checkout are for demo; production would use a payment provider.',
+  },
+  {
+    q: 'How do baggage allowances work?',
+    a: 'Each fare tier lists included baggage; extra bags can often be added for a fee before departure.',
+  },
+]
 
 function HelpFAQPage() {
-  const { t } = useTranslation()
   const [query, setQuery] = useState('')
-
-  const faqItems = useMemo(
-    () =>
-      FAQ_INDEX.map((i) => ({
-        q: t(`helpFaq.q${i}`),
-        a: t(`helpFaq.a${i}`),
-      })),
-    [t],
-  )
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return faqItems
-    return faqItems.filter((item) => item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q))
-  }, [faqItems, query])
+    if (!q) return FAQ_ITEMS
+    return FAQ_ITEMS.filter((item) => item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q))
+  }, [query])
 
   return (
-    <section className="help-inner" aria-label={t('helpFaq.aria')}>
+    <section className="help-inner" aria-label="FAQ">
       <header className="page-header">
-        <h1 className="page-title">{t('helpFaq.title')}</h1>
-        <p className="page-lead">{t('helpFaq.lead')}</p>
+        <h1 className="page-title">FAQ</h1>
+        <p className="page-lead">Quick answers about booking, baggage, and changes.</p>
       </header>
 
       <label className="field-block" style={{ marginBottom: 16 }}>
-        <span>{t('helpFaq.searchQuestions')}</span>
+        <span>Search questions</span>
         <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('helpFaq.searchPlaceholder')}
-          aria-label={t('helpFaq.filterAria')}
+          placeholder="Type to filter…"
+          aria-label="Filter FAQ"
         />
       </label>
 
       <div className="faq-list">
-        {filtered.length === 0 ? <p className="page-muted">{t('helpFaq.noMatch')}</p> : null}
+        {filtered.length === 0 ? <p className="page-muted">No questions match your search.</p> : null}
         {filtered.map((item) => (
           <details key={item.q} className="faq-item">
             <summary>{item.q}</summary>

@@ -18,10 +18,17 @@ import {
   removeStorageKey,
   writeVersionedStorage,
 } from '../utils/storage.ts'
+import {
+  AUTH_EXPIRED_EVENT,
+  authService,
+  setAuthToken,
+  type LoginRequest,
+  type RegisterRequest,
+} from '../api/index.ts'
 
 const DEFAULT_SESSION_TTL_MS = 12 * 60 * 60 * 1000
 
-export type AuthRole = 'user' | 'admin'
+export type AuthRole = 'user' | 'admin' | 'manager'
 
 export type AuthUser = {
   id: string
@@ -32,14 +39,9 @@ export type AuthUser = {
 export type AuthSession = {
   user: AuthUser
   role: AuthRole
+  token: string
   issuedAt: number
   expiresAt: number
-}
-
-type LoginInput = {
-  email: string
-  displayName?: string
-  role?: AuthRole
 }
 
 type AuthContextValue = {
@@ -47,26 +49,18 @@ type AuthContextValue = {
   user: AuthUser | null
   role: AuthRole | null
   sessionExpiresAt: number | null
-  login: (input: LoginInput) => void
+  login: (input: LoginRequest) => Promise<void>
+  register: (input: RegisterRequest) => Promise<void>
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-function buildSession(input: LoginInput): AuthSession {
-  const now = Date.now()
-  const role = input.role ?? 'user'
-  const email = input.email.trim().toLowerCase()
-  return {
-    user: {
-      id: `mock-${email || 'user'}`,
-      email,
-      displayName: input.displayName?.trim() || email.split('@')[0] || 'Traveler',
-    },
-    role,
-    issuedAt: now,
-    expiresAt: now + DEFAULT_SESSION_TTL_MS,
-  }
+function mapBackendRole(role: string): AuthRole {
+  const r = role.toLowerCase()
+  if (r === 'admin') return 'admin'
+  if (r === 'manager') return 'manager'
+  return 'user'
 }
 
 function isSessionValid(session: AuthSession): boolean {
@@ -74,40 +68,29 @@ function isSessionValid(session: AuthSession): boolean {
     session.user?.id &&
       session.user?.email &&
       session.user?.displayName &&
-      (session.role === 'user' || session.role === 'admin') &&
+      session.token &&
+      (session.role === 'user' || session.role === 'admin' || session.role === 'manager') &&
       Number.isFinite(session.issuedAt) &&
       Number.isFinite(session.expiresAt) &&
       session.expiresAt > Date.now(),
   )
 }
 
-function readLegacySession(): AuthSession | null {
-  const isAuthenticated = readStorageJson<string | null>(LS_AUTH_LEGACY, {
-    fallback: null,
-  })
-  if (isAuthenticated !== '1') {
-    return null
-  }
-  const storedRole = readStorageJson<string | null>(LS_AUTH_ROLE_LEGACY, {
-    fallback: null,
-  })
-  const role: AuthRole = storedRole === 'admin' ? 'admin' : 'user'
-  return buildSession({
-    email: role === 'admin' ? 'admin@mock.local' : 'user@mock.local',
-    displayName: role === 'admin' ? 'Admin' : 'Traveler',
-    role,
-  })
-}
-
 function readStoredSession(): AuthSession | null {
   const parsed = readVersionedStorage<AuthSession | null>(LS_AUTH_SESSION, {
-    expectedVersion: 1,
+    expectedVersion: 2,
     fallback: null,
   })
   if (parsed && isSessionValid(parsed)) {
     return parsed
   }
-  return readLegacySession()
+  // Старые версии (v1 без токена и legacy mock-флаги) принудительно очищаем.
+  removeStorageKey(LS_AUTH_SESSION)
+  removeStorageKey(LS_AUTH_LEGACY)
+  removeStorageKey(LS_AUTH_ROLE_LEGACY)
+  // На всякий случай вычищаем мёртвые legacy-ключи, если они вдруг всё ещё лежат.
+  readStorageJson<string | null>(LS_AUTH_LEGACY, { fallback: null })
+  return null
 }
 
 function persistSession(session: AuthSession | null): void {
@@ -115,23 +98,46 @@ function persistSession(session: AuthSession | null): void {
     removeStorageKey(LS_AUTH_SESSION)
     removeStorageKey(LS_AUTH_LEGACY)
     removeStorageKey(LS_AUTH_ROLE_LEGACY)
+    setAuthToken(null)
     return
   }
   writeVersionedStorage(LS_AUTH_SESSION, session, {
-    version: 1,
-    ttlMs: DEFAULT_SESSION_TTL_MS,
+    version: 2,
+    ttlMs: Math.max(0, session.expiresAt - Date.now()),
   })
   removeStorageKey(LS_AUTH_LEGACY)
   removeStorageKey(LS_AUTH_ROLE_LEGACY)
+  setAuthToken(session.token)
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<AuthSession | null>(readStoredSession)
+  const [session, setSession] = useState<AuthSession | null>(() => {
+    const restored = readStoredSession()
+    if (restored) setAuthToken(restored.token)
+    return restored
+  })
 
-  const login = useCallback((input: LoginInput) => {
-    const nextSession = buildSession(input)
-    persistSession(nextSession)
-    setSession(nextSession)
+  const login = useCallback(async (input: LoginRequest) => {
+    const result = await authService.login(input)
+    const now = Date.now()
+    const email = input.email.trim().toLowerCase()
+    const next: AuthSession = {
+      user: {
+        id: String(result.userId),
+        email,
+        displayName: result.username || email.split('@')[0] || 'Traveler',
+      },
+      role: mapBackendRole(result.role),
+      token: result.token,
+      issuedAt: now,
+      expiresAt: now + DEFAULT_SESSION_TTL_MS,
+    }
+    persistSession(next)
+    setSession(next)
+  }, [])
+
+  const register = useCallback(async (input: RegisterRequest) => {
+    await authService.register(input)
   }, [])
 
   const logout = useCallback(() => {
@@ -140,9 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (!session) {
-      return
-    }
+    if (!session) return
     const timeoutMs = Math.max(0, session.expiresAt - Date.now())
     const timer = window.setTimeout(() => {
       persistSession(null)
@@ -151,14 +155,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timer)
   }, [session])
 
+  useEffect(() => {
+    const handler = () => {
+      persistSession(null)
+      setSession(null)
+    }
+    window.addEventListener(AUTH_EXPIRED_EVENT, handler)
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handler)
+  }, [])
+
   const isAuthenticated = Boolean(session && isSessionValid(session))
   const user = isAuthenticated && session ? session.user : null
   const role = isAuthenticated && session ? session.role : null
   const sessionExpiresAt = isAuthenticated && session ? session.expiresAt : null
 
   const value = useMemo(
-    () => ({ isAuthenticated, user, role, sessionExpiresAt, login, logout }),
-    [isAuthenticated, user, role, sessionExpiresAt, login, logout],
+    () => ({ isAuthenticated, user, role, sessionExpiresAt, login, register, logout }),
+    [isAuthenticated, user, role, sessionExpiresAt, login, register, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

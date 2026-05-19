@@ -1,9 +1,10 @@
-// Оплата: в sessionStorage сохраняются только безопасные billing-поля (без данных карты).
+// Учебный проект: оплата симуляция — любые данные, всегда переход на успех.
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { SS_PAYMENT_DRAFT } from '../constants/storageKeys.ts'
 import { readVersionedStorage, writeVersionedStorage } from '../utils/storage.ts'
+import { useBooking } from '../context/BookingContext.tsx'
+import { ordersService } from '../api/index.ts'
 
 type PaymentDraft = {
   cardNumber: string
@@ -13,10 +14,9 @@ type PaymentDraft = {
   country: string
   city: string
   address: string
-  terms: boolean
 }
 
-type PersistedPaymentDraft = Pick<PaymentDraft, 'country' | 'city' | 'address' | 'terms'>
+type PersistedPaymentDraft = Pick<PaymentDraft, 'country' | 'city' | 'address'>
 
 function loadDraft(): PaymentDraft {
   const persisted = readVersionedStorage<Partial<PersistedPaymentDraft>>(SS_PAYMENT_DRAFT, {
@@ -32,20 +32,47 @@ function loadDraft(): PaymentDraft {
     country: String(persisted.country ?? ''),
     city: String(persisted.city ?? ''),
     address: String(persisted.address ?? ''),
-    terms: persisted.terms !== false,
   }
 }
 
 function PaymentPage() {
-  const { t } = useTranslation()
   const [draft, setDraft] = useState<PaymentDraft>(() => loadDraft())
+  const [busy, setBusy] = useState(false)
+  const navigate = useNavigate()
+  const { selectedOffer } = useBooking()
+
+  const totalLabel =
+    selectedOffer != null
+      ? `${selectedOffer.currency ?? '$'}${selectedOffer.priceFrom?.toFixed?.(2) ?? selectedOffer.priceFrom}`
+      : '—'
+
+  const handlePay = async () => {
+    setBusy(true)
+    let ref = `DEMO-${Date.now().toString(36).toUpperCase()}`
+
+    const productId = selectedOffer?.ticketId ? Number(selectedOffer.ticketId) : NaN
+    if (Number.isFinite(productId) && productId > 0) {
+      try {
+        const order = await ordersService.create({
+          items: [{ productId, qua: 1 }],
+        })
+        ref = `ORD-${order.id}`
+      } catch {
+        /* демо: заказ в БД не обязателен */
+      }
+    }
+
+    navigate('/booking/success', {
+      state: { ref, demoPayment: true },
+    })
+    setBusy(false)
+  }
 
   useEffect(() => {
     const safeDraft: PersistedPaymentDraft = {
       country: draft.country,
       city: draft.city,
       address: draft.address,
-      terms: draft.terms,
     }
     writeVersionedStorage(SS_PAYMENT_DRAFT, safeDraft, { area: 'session', version: 1 })
   }, [draft])
@@ -55,65 +82,70 @@ function PaymentPage() {
   }
 
   return (
-    <section className="page-shell" aria-label={t('payment.aria')}>
-      <ol className="booking-steps" aria-label={t('bookingFlow.stepsAria')}>
+    <section className="page-shell" aria-label="Payment">
+      <ol className="booking-steps" aria-label="Booking progress">
         <li>
-          <Link to="/booking">{t('bookingFlow.overview')}</Link>
+          <Link to="/booking">Overview</Link>
         </li>
         <li>
-          <Link to="/booking/passengers">{t('bookingFlow.passengers')}</Link>
+          <Link to="/booking/passengers">Passengers</Link>
         </li>
-        <li className="active">{t('bookingFlow.payment')}</li>
-        <li>{t('bookingFlow.confirmation')}</li>
+        <li className="active">Payment</li>
+        <li>Confirmation</li>
       </ol>
 
       <header className="page-header">
-        <h1 className="page-title">{t('payment.title')}</h1>
+        <h1 className="page-title">Payment (demo)</h1>
         <p className="page-lead">
-          {t('payment.leadPrefix')} <strong>$412.00</strong> {t('payment.leadSuffix')}
+          Учебная симуляция: реальных платежей нет. Укажите любые данные и нажмите кнопку — бронирование завершится.
+        </p>
+        <p className="page-muted">
+          К оплате (ориентир): <strong>{totalLabel}</strong>
         </p>
       </header>
 
       <div className="payment-layout">
         <div className="fieldset-card">
-          <h2>{t('payment.card')}</h2>
+          <h2>Card (примерная форма)</h2>
           <label className="field-block">
-            <span>{t('payment.cardNumber')}</span>
+            <span>Card number</span>
             <input
               type="text"
               inputMode="numeric"
-              placeholder="0000 0000 0000 0000"
-              autoComplete="cc-number"
+              placeholder="Любые цифры"
+              autoComplete="off"
               value={draft.cardNumber}
               onChange={(e) => setField('cardNumber', e.target.value)}
             />
           </label>
           <div className="form-grid-2">
             <label className="field-block">
-              <span>{t('payment.expiry')}</span>
+              <span>Expiry</span>
               <input
                 type="text"
                 placeholder="MM/YY"
-                autoComplete="cc-exp"
+                autoComplete="off"
                 value={draft.expiry}
                 onChange={(e) => setField('expiry', e.target.value)}
               />
             </label>
             <label className="field-block">
-              <span>{t('payment.cvc')}</span>
+              <span>CVC</span>
               <input
-                type="password"
-                autoComplete="cc-csc"
+                type="text"
+                autoComplete="off"
+                placeholder="123"
                 value={draft.cvc}
                 onChange={(e) => setField('cvc', e.target.value)}
               />
             </label>
           </div>
           <label className="field-block">
-            <span>{t('payment.cardholder')}</span>
+            <span>Cardholder name</span>
             <input
               type="text"
-              autoComplete="cc-name"
+              autoComplete="off"
+              placeholder="Имя как угодно"
               value={draft.holder}
               onChange={(e) => setField('holder', e.target.value)}
             />
@@ -121,48 +153,38 @@ function PaymentPage() {
         </div>
 
         <div className="fieldset-card">
-          <h2>{t('payment.billing')}</h2>
+          <h2>Billing (необязательно)</h2>
           <label className="field-block">
-            <span>{t('payment.country')}</span>
+            <span>Country</span>
             <select value={draft.country} onChange={(e) => setField('country', e.target.value)}>
-              <option value="" disabled>
-                {t('payment.selectCountry')}
-              </option>
-              <option value="us">{t('payment.countryUs')}</option>
-              <option value="ru">{t('payment.countryRu')}</option>
-              <option value="tr">{t('payment.countryTr')}</option>
+              <option value="">—</option>
+              <option value="us">United States</option>
+              <option value="ru">Russia</option>
+              <option value="tr">Turkey</option>
             </select>
           </label>
           <label className="field-block">
-            <span>{t('payment.city')}</span>
+            <span>City</span>
             <input type="text" value={draft.city} onChange={(e) => setField('city', e.target.value)} />
           </label>
           <label className="field-block">
-            <span>{t('payment.addressLine')}</span>
+            <span>Address line</span>
             <input
               type="text"
-              autoComplete="street-address"
+              autoComplete="off"
               value={draft.address}
               onChange={(e) => setField('address', e.target.value)}
             />
-          </label>
-          <label className="checkbox-row">
-            <input
-              type="checkbox"
-              checked={draft.terms}
-              onChange={(e) => setField('terms', e.target.checked)}
-            />
-            {t('payment.agreeFare')}
           </label>
         </div>
       </div>
 
       <div className="detail-actions">
-        <Link to="/booking/success" className="primary-button">
-          {t('payment.payNow')}
-        </Link>
+        <button type="button" className="primary-button" onClick={() => void handlePay()} disabled={busy}>
+          {busy ? 'Завершаем…' : 'Подтвердить (демо-оплата)'}
+        </button>
         <Link to="/booking/passengers" className="text-button">
-          {t('payment.back')}
+          Back
         </Link>
       </div>
     </section>

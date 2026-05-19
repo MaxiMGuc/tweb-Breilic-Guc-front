@@ -1,3 +1,8 @@
 export { adminService } from './adminService.ts'
+export { authService } from './authService.ts'
+export { ordersService } from './ordersService.ts'
 export { searchService } from './searchService.ts'
 export { tripsService } from './tripsService.ts'
+export { productService } from './productService.ts'
+export { orderAdminService } from './orderAdminService.ts'
+export { deleteUser, setUserRole, setUserActive } from './userAdminService.ts'

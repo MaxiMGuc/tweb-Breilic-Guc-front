@@ -1,58 +1,79 @@
-// Вход: mock login, редирект после входа, «Забыли пароль» — UI.
+// Вход через реальный бэкенд /api/session/auth.
 import { useState, type FormEvent } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import EmailField from '../components/form/EmailField'
-import PasswordField from '../components/form/PasswordField'
 import { useAuth } from '../context/AuthContext.tsx'
+import { ApiError } from '../api/index.ts'
 
 function LoginPage() {
-  const { t } = useTranslation()
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from ?? '/profile'
 
+  const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   const [forgotHint, setForgotHint] = useState<string | null>(null)
 
-  const handleMockLogin = (e: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError(null)
     const fd = new FormData(e.currentTarget)
-    const email = String(fd.get('email') ?? '')
-    const role = email.toLowerCase().includes('admin') ? 'admin' : 'user'
-    login({ email, role })
-    navigate(from, { replace: true })
+    const email = String(fd.get('email') ?? '').trim()
+    const password = String(fd.get('password') ?? '')
+    if (!email || !password) {
+      setError('Email and password are required.')
+      return
+    }
+    setBusy(true)
+    try {
+      await login({ email, password })
+      navigate(from, { replace: true })
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setError('Invalid email or password.')
+      } else {
+        setError('Cannot reach the server. Please try again.')
+      }
+    } finally {
+      setBusy(false)
+    }
   }
 
   const handleForgotPassword = () => {
-    setForgotHint(t('login.forgotMockHint'))
+    setForgotHint('If an account exists for this email, we sent reset instructions (mock — no request sent).')
     window.setTimeout(() => setForgotHint(null), 6000)
   }
 
   return (
-    <section className="page-shell page-auth" aria-label={t('login.aria')}>
+    <section className="page-shell page-auth" aria-label="Log in">
       <header className="page-header">
-        <h1 className="page-title">{t('login.title')}</h1>
+        <h1 className="page-title">Log in</h1>
         <p className="page-lead">
-          {t('login.lead')}{' '}
-          <Link to="/auth/register">{t('login.createOne')}</Link>
+          No account yet? <Link to="/auth/register">Create one</Link>
         </p>
       </header>
 
+      {error ? <p className="page-muted" role="alert">{error}</p> : null}
       {forgotHint ? <p className="page-muted">{forgotHint}</p> : null}
 
-      <form className="auth-form" onSubmit={handleMockLogin}>
-        <EmailField label={t('common.email')} name="email" autoComplete="username" required />
-        <PasswordField label={t('common.password')} autoComplete="current-password" />
+      <form className="auth-form" onSubmit={handleLogin}>
+        <label className="field-block">
+          <span>Email</span>
+          <input name="email" type="email" autoComplete="username" required />
+        </label>
+        <label className="field-block">
+          <span>Password</span>
+          <input name="password" type="password" autoComplete="current-password" required />
+        </label>
         <label className="checkbox-row">
           <input type="checkbox" />
-          {t('login.remember')}
+          Remember me on this device
         </label>
-        <button type="submit" className="primary-button wide">
-          {t('login.submit')}
+        <button type="submit" className="primary-button wide" disabled={busy}>
+          {busy ? 'Signing in…' : 'Log in'}
         </button>
         <button type="button" className="text-button" onClick={handleForgotPassword}>
-          {t('login.forgot')}
+          Forgot password?
         </button>
       </form>
     </section>

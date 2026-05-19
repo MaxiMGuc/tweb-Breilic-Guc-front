@@ -1,11 +1,9 @@
 // История поисков из localStorage; «Повторить поиск» с query (T44).
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { getSearchHistory } from '../utils/searchHistory.ts'
 
 function ProfileHistoryPage() {
-  const { t } = useTranslation()
   const [version, setVersion] = useState(0)
   const items = useMemo(() => {
     void version
@@ -15,27 +13,27 @@ function ProfileHistoryPage() {
   const refresh = () => setVersion((v) => v + 1)
 
   return (
-    <section className="page-shell" aria-label={t('profileHistory.aria')}>
+    <section className="page-shell" aria-label="Search history">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/profile">{t('profileHistory.breadcrumbProfile')}</Link>
+        <Link to="/profile">Profile</Link>
         <span aria-hidden="true"> / </span>
-        <span>{t('profileHistory.breadcrumbHistory')}</span>
+        <span>History</span>
       </nav>
 
       <header className="page-header">
-        <h1 className="page-title">{t('profileHistory.title')}</h1>
-        <p className="page-lead">{t('profileHistory.lead')}</p>
+        <h1 className="page-title">Search history</h1>
+        <p className="page-lead">Recently searched routes on this device.</p>
       </header>
 
       <p className="page-muted">
         <button type="button" className="text-button" onClick={refresh}>
-          {t('profileHistory.refreshList')}
+          Refresh list
         </button>
       </p>
 
       <ul className="history-list">
         {items.length === 0 ? (
-          <li className="page-muted">{t('profileHistory.empty')}</li>
+          <li className="page-muted">No history yet — run a search from the home or search page.</li>
         ) : null}
         {items.map((h) => (
           <li key={h.id} className="history-item">
@@ -44,7 +42,7 @@ function ProfileHistoryPage() {
               to={`/search?from=${encodeURIComponent(h.from)}&to=${encodeURIComponent(h.to)}`}
               className="text-button"
             >
-              {t('profileHistory.repeat')}
+              Repeat search
             </Link>
           </li>
         ))}
